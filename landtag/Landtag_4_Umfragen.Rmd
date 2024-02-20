@@ -1,0 +1,1588 @@
+---
+#title: "Umfragen zu den Landtagswahlen"
+title: "&#32;"
+#author: "Philippe"
+#date: "2023-07-17"
+output:  
+  html_document
+    #:
+    #toc: true
+    #toc_depth: 4
+    #toc_float: true
+  #toc: default
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE, echo=FALSE}
+library(plotly)
+library(reactable)
+library(downloadthis)
+library(car)
+```
+
+```{r Datum, echo=FALSE, warning=FALSE}
+current_date <- Sys.Date()
+current_date <- format(current_date, "%d.%m.%Y")
+```
+
+*Stand `r current_date`*
+\
+\
+
+Das [Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt) führt seit 1997 Umfragen zu den Landtagswahlen durch (siehe hierzu auch die [methodischen Anmerkungen](#methode)). Dabei wurden einige Fragestellungen wiederholt abgefragt, was einen Vergleich über die Zeit erlaubt. 
+
+Seit 1945 haben fünf Parteien den Einzug in den Landtag geschafft: Die beiden bürgerlichen Grossparteien **Fortschrittliche Bürgerpartei (FBP)** und **Vaterländische Union (VU)**, seit 1993 die linke Oppositionspartei **Freie Liste (FL)** sowie die beiden rechten Oppositionsparteien **DU - Die Unabhängigen für Liechtenstein** (2013-2017) und **Demokraten pro Liechtenstein (DpL)** (2021).   
+
+
+\
+
+# Wahlentscheid 
+
+Im Rahmen der Wahlumfragen wird unter anderem untersucht, inwieweit sich der Entscheid für die eine oder anderen Partei zwischen verschiedenen sozialen Gruppen unterscheidet und welche Motive für den Wahlentscheid eine Rolle spielen. 
+\
+
+### Wahlentscheid soziodemografisch {.tabset}
+
+Die durchgeführten Wahlumfragen geben unter anderem Aufschluss darüber, welchen Parteien verschiedene Bevölkerungsgruppen den Vorzug gegeben haben. So kann eruiert werden, für welche Parteien sich weibliche oder männliche Wählende oder verschiedene Altersgruppen entschieden haben.
+
+\
+
+#### Nach Geschlecht
+
+```{r Wahlentscheid Geschlecht, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=3.5, message=FALSE,}
+# Datensatz einlesen:
+datplot<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlentscheid.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Auswahl der Traces:
+spurenauswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlentscheid_Auswahl.csv",
+                        header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(spurenauswahl)[1] <- "partei"
+
+# Plot Geschlecht:
+fig <- plot_ly()
+for (i in 1:10){
+  if (spurenauswahl$partei[i]=="DpL"){
+    fig <- fig %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                             x=~rep(Datum, 2), y=~c(unten, oben), 
+                             text=~unten,
+                             type="scatter", mode="lines",
+                             line=list(color="rgba(0, 95, 171, 0.2)"),
+                             showlegend=TRUE,
+                             visible=ifelse(i==1, "legendonly", FALSE),
+                             name="90% Konfidenzintervall",
+                             hovertemplate=paste("%{text:.1f}%", "%{y:.1f}%", sep=" - ")
+    )
+    fig <- fig %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                             x=~Datum, y=~wert, 
+                             type="scatter", mode="lines+markers",
+                             line=list(color=spurenauswahl$farben[i]),
+                             marker=list(color=spurenauswahl$farben[i]),
+                             showlegend=TRUE,
+                             visible=spurenauswahl$sichtbar3[i],
+                             name=spurenauswahl$partei[i],
+                             hovertemplate=paste("%{y:.1f}", "%", sep=""))
+  } else {
+    fig <- fig %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                             x=~Datum, y=~oben,
+                             type="scatter", mode="lines",
+                             line=list(color="transparent"),
+                             showlegend=FALSE,
+                             visible=spurenauswahl$sichtbar1[i],
+                             name="90% Konfidenzintervall",
+                             hoverinfo="skip"
+    )
+    fig <- fig %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                             x=~Datum, y=~unten, text=~oben,
+                             type="scatter", mode="lines",
+                             line=list(color="transparent"),
+                             fill="tonexty",
+                             fillcolor=spurenauswahl$farbenkonfidenz[i],
+                             showlegend=TRUE,
+                             visible=ifelse(spurenauswahl$was[i]=="Frauen", "legendonly", FALSE),
+                             name="90% Konfidenzintervall",
+                             hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+    )
+    fig <- fig %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                             x=~Datum, y=~wert, 
+                             type="scatter", mode="lines+markers",
+                             line=list(color=spurenauswahl$farben[i]),
+                             marker=list(color=spurenauswahl$farben[i]),
+                             showlegend=TRUE,
+                             visible=spurenauswahl$sichtbar3[i],
+                             name=spurenauswahl$partei[i],
+                             hovertemplate=paste("%{y:.1f}", "%", sep=""))
+  }
+}
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d"))
+
+fig <- fig %>% layout(
+  yaxis=list(range=c(0, 70),
+             title="Anteil (%)"),
+  xaxis=list(
+    type="date",
+    title="",
+    tickvals=datplot$Datum,
+    ticktext=datplot$Datum),
+  hovermode="x unified",
+  legend=list(y=0.8),
+  plot_bgcolor='#f5f5f5',
+  updatemenus = list(
+    list(
+      y=0.95,
+      x=1.2,
+      xanchor="right",
+      buttons = list(
+        list(method = "update",
+             args = list(list(visible=list("legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE))),
+             label = "Frauen"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, 
+                                           "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE,
+                                           TRUE, "legendonly", TRUE))),
+             label = "Männer")
+      )
+    )
+  )
+)
+
+fig
+
+# Daten-Download
+wahlentscheid <- data.frame(Datum = datplot$Datum,
+                            Partei = datplot$partei,
+                            Gruppe = datplot$was,
+                            Anteil = round(datplot$wert, 1),
+                            KI_unten = round(datplot$unten, 1),
+                            KI_oben = round(datplot$oben, 1))
+wahlentscheid <- wahlentscheid[wahlentscheid$Gruppe %in% c("Frauen", "Männer"),]
+
+wahlentscheid %>% 
+  download_this(output_name = "Wahlentscheid_Geschlecht",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+
+*Lesebeispiel: *Bei den Wahlen 2021 haben sich jeweils etwa 36 Prozent der befragten Frauen für die FBP oder die VU entschieden, während 14 Prozent der FL, zehn Prozent den DpL und rund drei Prozent der DU den Vorzug gegeben haben.  
+
+Informationen zur Zusammensetzung der jeweiligen Wählerschaften nach Geschlecht finden sich auf der Seite zu den Parteien (LINK FEHLT NOCH!!!!). Dort kann beispielsweise nachgeschaut werden, wie viele Frauen und wie viele Männer die FBP gewählt haben, während in der Grafik oben dargestellt wird, für welche Parteien sich weibliche und männliche Wählende entschieden haben.
+\
+\
+\
+
+#### Nach Alter
+
+```{r Wahlentscheid Alter, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=3.5, message=FALSE,}
+# Datensatz einlesen:
+datplot<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlentscheid.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Auswahl der Traces:
+spurenauswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlentscheid_Auswahl.csv",
+                        header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(spurenauswahl)[1] <- "partei"
+
+# Plot Alter:
+fig1 <- plot_ly()
+for (i in 11:30){
+  if (spurenauswahl$partei[i]=="DpL"){
+    fig1 <- fig1 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~rep(Datum, 2), y=~c(unten, oben), 
+                               text=~unten,
+                               type="scatter", mode="lines",
+                               line=list(color="rgba(0, 95, 171, 0.2)"),
+                               showlegend=TRUE,
+                               visible=ifelse(spurenauswahl$was[i] == "a1834", "legendonly", FALSE),
+                               name="90% Konfidenzintervall",
+                               hovertemplate=paste("%{text:.1f}%", "%{y:.1f}%", sep=" - ")
+    )
+    fig1 <- fig1 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~wert, 
+                               type="scatter", mode="lines+markers",
+                               line=list(color=spurenauswahl$farben[i]),
+                               marker=list(color=spurenauswahl$farben[i]),
+                               showlegend=TRUE,
+                               visible=spurenauswahl$sichtbar3[i],
+                               name=spurenauswahl$partei[i],
+                               hovertemplate=paste("%{y:.1f}", "%", sep=""))
+  } else {
+    fig1 <- fig1 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~oben,
+                               type="scatter", mode="lines",
+                               line=list(color="transparent"),
+                               showlegend=FALSE,
+                               visible=spurenauswahl$sichtbar1[i],
+                               name="90% Konfidenzintervall",
+                               hoverinfo="skip"
+    )
+    fig1 <- fig1 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~unten, text=~oben,
+                               type="scatter", mode="lines",
+                               line=list(color="transparent"),
+                               fill="tonexty",
+                               fillcolor=spurenauswahl$farbenkonfidenz[i],
+                               showlegend=TRUE,
+                               visible=ifelse(spurenauswahl$was[i]=="a1834", "legendonly", FALSE),
+                               name="90% Konfidenzintervall",
+                               hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+    )
+    fig1 <- fig1 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~wert, 
+                               type="scatter", mode="lines+markers",
+                               line=list(color=spurenauswahl$farben[i]),
+                               marker=list(color=spurenauswahl$farben[i]),
+                               showlegend=TRUE,
+                               visible=spurenauswahl$sichtbar3[i],
+                               name=spurenauswahl$partei[i],
+                               hovertemplate=paste("%{y:.1f}", "%", sep=""))
+  }
+}
+
+fig1 <- config(fig1,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d"))
+
+fig1 <- fig1 %>% layout(yaxis=list(range=c(0, 70),
+                                   title="Anteil (%)"),
+                        xaxis=list(type="date",
+                                   title="",
+                                   tickvals=datplot$Datum,
+                                   ticktext=datplot$Datum),
+                        hovermode="x unified",
+                        legend=list(y=0.8),
+                        plot_bgcolor='#f5f5f5',
+                        updatemenus = list(
+                          list(
+                            y=0.95,
+                            x=1.24,
+                            xanchor="right",
+                            buttons = list(
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list(FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE,
+                                                    "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE))),
+                                   label = "18-34 Jährige"),
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list(FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE))),
+                                   label = "35-49 Jährige"),
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list(FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE))),
+                                   label = "50-64 Jährige"),
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list("legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE))),
+                                   label = "65+ Jährige")
+                              )
+                            )
+                          )
+                        )
+
+fig1
+
+# Daten-Download
+wahlentscheid <- data.frame(Datum = datplot$Datum,
+                            Partei = datplot$partei,
+                            Gruppe = datplot$was,
+                            Anteil = round(datplot$wert, 1),
+                            KI_unten = round(datplot$unten, 1),
+                            KI_oben = round(datplot$oben, 1))
+wahlentscheid <- wahlentscheid[wahlentscheid$Gruppe %in% c("a65", "a5064", "a3549", "a1834"),]
+wahlentscheid$Gruppe <- recode(wahlentscheid$Gruppe, "'a65'='65+ Jahre'; 'a5064'='50-64 Jahre';
+                               'a3549'='35-49 Jahre'; 'a1834'='18-34 Jahre'")
+
+wahlentscheid %>% 
+  download_this(output_name = "Wahlentscheid_Alter",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+
+*Lesebeispiel: *Von den Befragten im Alter zwischen 18 und 34 Jahren haben bei den Wahlen 2021 jeweils etwa 34 Prozent die FBP oder die VU gewählt. Rund 21 Prozent haben sich für die FL entschieden, acht Prozent für die DpL und etwa vier Prozent für die DU.  
+
+Informationen zur Zusammensetzung der jeweiligen Wählerschaften nach Alter finden sich auf der Seite zu den Parteien (LINK FEHLT NOCH!!!!). Dort kann beispielsweise nachgeschaut werden, wie viele jüngere oder wie viele ältere Personen die FBP gewählt haben, während in der Grafik oben dargelegt wird, für welche Parteien sich verschiedene Altersgruppen entschieden haben.
+\
+\
+\
+
+#### Nach Links-Rechts
+
+```{r Wahlentscheid LinksRechts, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=3.5, message=FALSE,}
+# Datensatz einlesen:
+datplot<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlentscheid.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Auswahl der Traces:
+spurenauswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlentscheid_Auswahl.csv",
+                        header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(spurenauswahl)[1] <- "partei"
+
+# Plot Links-Rechts:
+fig2 <- plot_ly()
+for (i in 31:45){
+  if (spurenauswahl$partei[i]=="DpL"){
+    fig2 <- fig2 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~rep(Datum, 2), y=~c(unten, oben), 
+                               text=~unten,
+                               type="scatter", mode="lines",
+                               line=list(color="rgba(0, 95, 171, 0.2)"),
+                               showlegend=TRUE,
+                               visible=ifelse(spurenauswahl$was[i] == "Links", "legendonly", FALSE),
+                               name="90% Konfidenzintervall",
+                               hovertemplate=paste("%{text:.1f}%", "%{y:.1f}%", sep=" - ")
+    )
+    fig2 <- fig2 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~wert, 
+                               type="scatter", mode="lines+markers",
+                               line=list(color=spurenauswahl$farben[i]),
+                               marker=list(color=spurenauswahl$farben[i]),
+                               showlegend=TRUE,
+                               visible=spurenauswahl$sichtbar3[i],
+                               name=spurenauswahl$partei[i],
+                               hovertemplate=paste("%{y:.1f}", "%", sep=""))
+  } else {
+    fig2 <- fig2 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~oben,
+                               type="scatter", mode="lines",
+                               line=list(color="transparent"),
+                               showlegend=FALSE,
+                               visible=spurenauswahl$sichtbar1[i],
+                               name="90% Konfidenzintervall",
+                               hoverinfo="skip"
+    )
+    fig2 <- fig2 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~unten, text=~oben,
+                               type="scatter", mode="lines",
+                               line=list(color="transparent"),
+                               fill="tonexty",
+                               fillcolor=spurenauswahl$farbenkonfidenz[i],
+                               showlegend=TRUE,
+                               visible=ifelse(spurenauswahl$was[i]=="Links", "legendonly", FALSE),
+                               name="90% Konfidenzintervall",
+                               hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+    )
+    fig2 <- fig2 %>% add_trace(data=datplot[datplot$was==spurenauswahl$was[i] & datplot$partei==spurenauswahl$partei[i],], 
+                               x=~Datum, y=~wert, 
+                               type="scatter", mode="lines+markers",
+                               line=list(color=spurenauswahl$farben[i]),
+                               marker=list(color=spurenauswahl$farben[i]),
+                               showlegend=TRUE,
+                               visible=spurenauswahl$sichtbar3[i],
+                               name=spurenauswahl$partei[i],
+                               hovertemplate=paste("%{y:.1f}", "%", sep=""))
+  }
+}
+
+fig2 <- config(fig2,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d"))
+
+fig2 <- fig2 %>% layout(yaxis=list(range=c(0, 70),
+                                   title="Anteil (%)"),
+                        xaxis=list(type="date",
+                                   title="",
+                                   tickvals=datplot$Datum,
+                                   ticktext=datplot$Datum),
+                        hovermode="x unified",
+                        legend=list(y=0.8),
+                        plot_bgcolor='#f5f5f5',
+                        updatemenus = list(
+                          list(
+                            y=0.95,
+                            x=1.24,
+                            xanchor="right",
+                            buttons = list(
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list("legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE))),
+                                   label = "Links"),
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list(FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE))),
+                                   label = "Mitte"),
+                              list(method = "update",
+                                   args = list(
+                                     list(
+                                       visible=list(FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE, 
+                                                    FALSE, FALSE, FALSE,
+                                                    "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE,
+                                                    TRUE, "legendonly", TRUE))),
+                                   label = "Rechts")
+                            )
+                          )
+                        )
+)
+
+fig2
+
+# Daten-Download
+wahlentscheid <- data.frame(Datum = datplot$Datum,
+                            Partei = datplot$partei,
+                            Gruppe = datplot$was,
+                            Anteil = round(datplot$wert, 1),
+                            KI_unten = round(datplot$unten, 1),
+                            KI_oben = round(datplot$oben, 1))
+wahlentscheid <- wahlentscheid[wahlentscheid$Gruppe %in% c("Links", "Mitte", "Rechts"),]
+
+wahlentscheid %>% 
+  download_this(output_name = "Wahlentscheid_LinksRechts",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+
+*Lesebeispiel: *Von den Befragten, die sich auf der linken Seite des Links-Rechts-Spektrums verorten, haben bei den Wahlen 2021 etwa 36 Prozent die FL gewählt. Jeweils rund 28 Prozent haben sich für die FBP oder VU entschieden, sechs Prozent für die DpL und etwa zwei Prozent für die DU.  
+
+Informationen zur Verortung der verschiedenen Parteien auf der Links-Rechts-Achse und zur Selbsteinschätzung der verschiedenen Wählerschaften finden sich auf der Seite zu den Parteien (LINK FEHLT NOCH!!!!). 
+\
+\
+\
+
+### Wahlmotive
+
+```{r Wahlmotive, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=3.5, message=FALSE}
+# Daten einlesen
+motiv <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlmotiv.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Auswahl für Traces:
+auswahl <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Wahlmotiv_Auswahl.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(auswahl)[1] <- "was"
+
+# Traces:
+fig <- plot_ly()
+
+for(i in 1:length(auswahl$was)){
+  dat <- motiv[motiv$was==auswahl$was[i],]
+  fig <- fig %>% add_trace(data=dat, x=~Datum, y=~oben,
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           showlegend=FALSE,
+                           visible=TRUE,
+                           name="90% Konfidenzintervall",
+                           hoverinfo="skip"
+  )
+  fig <- fig %>% add_trace(data=dat, x=~Datum, y=~unten, text=~oben,
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           fill="tonexty",
+                           fillcolor=auswahl$rgbakonfidenz[i],
+                           showlegend=TRUE,
+                           visible="legendonly",
+                           name="90% Konfidenzintervall",
+                           hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+  )
+  fig <- fig %>% add_trace(data=dat, x=~Datum, y=~wert, 
+                           type="scatter", mode="lines+markers",
+                           line=list(color=auswahl$rgbaspur[i]),
+                           marker=list(color=auswahl$rgbaspur[i]),
+                           showlegend=TRUE,
+                           visible=TRUE,
+                           name=auswahl$Beschriftung[i],
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+}
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d"))
+
+fig <- fig %>% layout(
+  yaxis=list(range=c(0, 50),
+             title="Anteil (%)"),
+  xaxis=list(
+    range=c("1999-12-01", "2022-01-01"),
+    type="date",
+    title="",
+    tickvals=motiv$Datum,
+    ticktext=motiv$Datum),
+  hovermode="x unified",
+  legend=list(y=0.8, 
+              title=list(text="<b>Primäres Wahlmotiv</b>")
+  ),
+  plot_bgcolor='#f5f5f5'
+)
+
+fig
+
+# Daten-Download
+wahlmotiv <- data.frame(Datum = motiv$Datum,
+                        Motiv = motiv$was,
+                        Anteil = round(motiv$wert, 1),
+                        KI_unten = round(motiv$unten, 1),
+                        KI_oben = round(motiv$oben, 1))
+wahlmotiv$Motiv <- recode(wahlmotiv$Motiv, "'gewohnheit' = 'Gewohnheit';
+                          'programm' = 'Programm der Partei';
+                          'ltteam' = 'Landtagsteam';
+                          'regteam' = 'Regierungsteam';
+                          'anderes' = 'Anderes'")
+
+wahlmotiv %>% 
+  download_this(output_name = "Wahlmotive",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Es gibt vielerlei Motive, weshalb man sich für eine bestimmte Partei entscheidet. Einige Wählerinnen und Wähler haben beispielsweise seit langer Zeit eine starke Bindung zu einer Partei und entscheiden sich deshalb aus Gewohnheit und Tradition für diese Partei, während für andere Wählende das Landtagsteam oder das inhaltliche Angebot einer Partei Ausschlag gebend ist. Mehrere solche Motive wurden vom Liechtenstein-Institut seit den Wahlen 2001 abgefragt. Bei den jüngsten Wahlen hat insbesondere das Motiv der Gewohnheit an Bedeutung eingebüsst, während das Regierungsteam an Bedeutung gewonnen hat.  
+\
+\
+
+### Bewusste Wahl von Frauen 
+
+```{r Frauenwahl, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Daten einlesen
+frauenwahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Frauenwahl.csv",
+                     header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+frauenwahl$Datum <- as.Date(frauenwahl$Datum, format="%d.%m.%Y")
+
+# Auswahl für Traces:
+auswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Frauenwahl_Auswahl.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(auswahl)[1] <- "Beschriftung"
+
+# Plot (DpL erst eine Wahl - sobald zwei Wahlgänge vorhanden, dann Skript ändern)
+fig <- plot_ly()
+# Total 
+for (i in 1:1){
+  dta <- frauenwahl[frauenwahl$Beschriftung==auswahl$Beschriftung[i],]
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~KI.oben, 
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           showlegend=FALSE,
+                           name="90% Konfidenzintervall",
+                           hoverinfo="skip"
+  )
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~KI.unten, text=~KI.oben,
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           fill="tonexty",
+                           fillcolor=auswahl$FarbeKonfidenz[i],
+                           showlegend=TRUE,
+                           visible="legendonly",
+                           name="90% Konfidenzintervall",
+                           hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+  )
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~Anteil, type="scatter", mode="lines+markers",
+                           line=list(color=auswahl$FarbeTrace[i]),
+                           marker=list(color=auswahl$FarbeTrace[i]),
+                           showlegend=TRUE,
+                           name=auswahl$Beschriftung[i],
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+}
+# Geschlecht:
+for (i in 2:3){
+  dta <- frauenwahl[frauenwahl$Beschriftung==auswahl$Beschriftung[i],]
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~KI.oben, 
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           showlegend=FALSE,
+                           visible=FALSE,
+                           name="90% Konfidenzintervall",
+                           hoverinfo="skip"
+  )
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~KI.unten, text=~KI.oben,
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           fill="tonexty",
+                           fillcolor=auswahl$FarbeKonfidenz[i],
+                           showlegend=TRUE,
+                           visible=FALSE,
+                           name="90% Konfidenzintervall",
+                           hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+  )
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~Anteil, type="scatter", mode="lines+markers",
+                           line=list(color=auswahl$FarbeTrace[i]),
+                           marker=list(color=auswahl$FarbeTrace[i]),
+                           showlegend=TRUE,
+                           visible=FALSE,
+                           name=auswahl$Beschriftung[i],
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+}
+# DpL
+dta <- frauenwahl[which(frauenwahl$Beschriftung=="DpL"),]
+dta2 <- rbind(dta, dta)
+dta2$KI.unten[2] <- dta$KI.oben[1]
+fig <- fig %>% add_trace(data=dta2, x=~Datum, y=~KI.unten, 
+                         text=dta$KI.oben,
+                         type="scatter", mode="lines",
+                         line=list(color=auswahl$FarbeKonfidenz[auswahl$Beschriftung=="DpL"]),
+                         showlegend=TRUE,
+                         visible=FALSE,
+                         name="90% Konfidenzintervall",
+                         hovertemplate=paste("%{text:.1f}%", "%{y:.1f}%", sep=" - ")
+)
+fig <- fig %>% add_trace(data=dta, x=~Datum, y=~Anteil, type="scatter", mode="lines+markers",
+                         line=list(color=auswahl$FarbeTrace[auswahl$Beschriftung=="DpL"]),
+                         marker=list(color=auswahl$FarbeTrace[auswahl$Beschriftung=="DpL"]),
+                         showlegend=TRUE,
+                         visible=FALSE,
+                         name="DpL",
+                         hovertemplate=paste("%{y:.1f}", "%", sep=""))
+# Rest
+for(i in 5:length(auswahl$Beschriftung)){
+  dta <- frauenwahl[which(frauenwahl$Beschriftung==auswahl$Beschriftung[i]),]
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~KI.oben, 
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           showlegend=FALSE,
+                           visible=FALSE,
+                           name="90% Konfidenzintervall",
+                           hoverinfo="skip"
+  )
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~KI.unten, text=~KI.oben,
+                           type="scatter", mode="lines",
+                           line=list(color="transparent"),
+                           fill="tonexty",
+                           fillcolor=auswahl$FarbeKonfidenz[i],
+                           showlegend=TRUE,
+                           visible=FALSE,
+                           name="90% Konfidenzintervall",
+                           hovertemplate=paste("%{y:.1f}%", "%{text:.1f}%", sep=" - ")
+  )
+  fig <- fig %>% add_trace(data=dta, x=~Datum, y=~Anteil, type="scatter", mode="lines+markers",
+                           line=list(color=auswahl$FarbeTrace[i]),
+                           marker=list(color=auswahl$FarbeTrace[i]),
+                           showlegend=TRUE,
+                           visible=FALSE,
+                           name=auswahl$Beschriftung[i],
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+}
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d"))
+
+# Layout:
+fig <- fig %>% layout(
+  yaxis=list(range=c(0, 60),
+             title="Anteil (%)"),
+  xaxis=list(
+    #range=c("1996-12-01", "2022-01-01"),
+    type="date",
+    title="",
+    tickvals=frauenwahl$Datum,
+    ticktext=frauenwahl$Datum),
+  hovermode="x unified",
+  legend=list(y=0.8),
+  plot_bgcolor='#f5f5f5',
+  updatemenus = list(
+    list(
+      y=0.95,
+      x=1.2,
+      xanchor="right",
+      buttons = list(
+        list(method = "update",
+             args = list(list(visible = list(TRUE, "legendonly", TRUE,  
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE))),
+             label = "Total"),
+        list(method = "update",
+             args = list(list(visible = list(FALSE, FALSE, FALSE,
+                                             TRUE, "legendonly", TRUE, 
+                                             TRUE, "legendonly", TRUE,
+                                             FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE))),
+             label = "Geschlecht"),
+        list(method = "update",
+             args = list(list(visible = list(FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             "legendonly", TRUE, 
+                                             TRUE, "legendonly", TRUE,
+                                             TRUE, "legendonly", TRUE,
+                                             TRUE, "legendonly", TRUE,
+                                             TRUE, "legendonly", TRUE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE))),
+             label = "Partei"),
+        list(method = "update",
+             args = list(list(visible = list(FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE,
+                                             TRUE, "legendonly", TRUE, 
+                                             TRUE, "legendonly", TRUE,
+                                             TRUE, "legendonly", TRUE,
+                                             TRUE, "legendonly", TRUE))),
+             label = "Alter")
+      )
+    )
+  )
+)
+fig
+
+# Daten-Download
+fwahl <- data.frame(Datum = frauenwahl$Datum,
+                    Gruppe = frauenwahl$Beschriftung,
+                    Anteil = round(frauenwahl$Anteil, 1),
+                    KI_unten = round(frauenwahl$KI.unten, 1),
+                    KI_oben = round(frauenwahl$KI.oben, 1))
+fwahl$Gruppe <- recode(fwahl$Gruppe, "'Bewusste Bevorzugung' = 'Total'")
+
+fwahl %>% 
+  download_this(output_name = "Frauenwahl",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Haben die Wählenden in ihrem Wahlentscheid bewusst Frauen bevorzugt? Auch darüber geben die Umfragen Auskunft. In der Grafik dargestellt ist der Anteil der Befragte, die diese Frage mit Ja beantwortet haben.
+
+Die [Analyse der Landtagswahlen 2021](https://www.liechtenstein-institut.li/application/files/1216/3065/8119/Beitrag_49_2021_Wahlanalyse.pdf) hat gezeigt, dass den Wählerinnen und Wählern eine ausgewogene Vertretung der verschiedenen Alters- und Berufsgruppen insgesamt wichtiger ist als eine ausgewogene Geschlechterrepräsentation (siehe [unten](#ausgewogene-zusammensetzung)). Doch auch diese wird von einer Mehrheit von 54 Prozent der Befragten als sehr oder eher wichtig erachtet. 
+\
+\
+
+# Stimmenherkunft {.tabset}
+
+Die Wählerschaften der Parteien lassen sich grob in drei Gruppen einteilen. Unter "Stammwählenden" werden Personen verstanden, die bei den letzten Landtagswahlen dieselbe Partei gewählt haben. Demgegenüber handelt es sich bei "Wechselwählenden" um Personen, die bei den letzten Landtagswahlen einer anderen Partei den Vorzug gegeben haben. Unter dem Begriff "Neuwählende" werden schliesslich Wählerinnen und Wähler subsummiert, die bei den letzten Wahlen nicht teilgenommen haben, nicht teilnehmen konnten oder noch nicht teilnehmen durften.  
+\
+
+## Wahljahr
+
+```{r Stimmenherkunft Jahr, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+stimmherkunft <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Stimmherkunft_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+stimmherkunft$beschriftung1  <- paste("[KI: ", 
+                                  round(stimmherkunft$stammKIunten),
+                                  "% - ",
+                                  round(stimmherkunft$stammKIoben),
+                                  "%]", 
+                                  sep="")
+stimmherkunft$beschriftung1[c(13, 21)] <- NA
+stimmherkunft$beschriftung2  <- paste("[KI: ", 
+                                      round(stimmherkunft$wechselKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$wechselKIoben),
+                                      "%]", 
+                                      sep="")
+stimmherkunft$beschriftung3  <- paste("[KI: ", 
+                                      round(stimmherkunft$neuKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$neuKIoben),
+                                      "%]", 
+                                      sep="")
+
+# Farben
+beschriftung <- data.frame(farben = c("#440154FF", "#21908CFF", "#FDE725FF"),
+                           beschr = c("Stammwählende", "Wechselwählende", "Neuwählende"))
+
+# Reihenfolge
+stimmherkunft$partei <- factor(stimmherkunft$partei, levels = c("DpL", "DU", "FL", "VU", "FBP"))
+
+# Plot 1: Nach Wahljahr
+fig <- plot_ly()
+for(k in seq(1997, 2021, 4)){
+  dat <- stimmherkunft[which(stimmherkunft$jahr == k),]
+  #dat$partei <- factor(dat$partei, levels = dat$partei)
+  j <- 13
+  for(i in c(4, 7, 10)){
+    fig <- fig %>% add_bars(data = dat,
+                            x = dat[,i],
+                            y = ~partei, 
+                            text = dat[,j],
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(k == 2021, TRUE, FALSE),
+                            marker = list(color = beschriftung$farben[(j-12)]), 
+                            name = beschriftung$beschr[(j-12)],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+    )
+    j <- j+1
+  }
+}
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.7,
+                                  traceorder = "normal"
+                      ),
+                      plot_bgcolor='#f5f5f5',
+                      updatemenus = list(
+                        list(
+                          y=0.92,
+                          x=1.27,
+                          xanchor="right",
+                          buttons = list(
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE))),
+                                 label = "Wahlen 2021"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE,
+                                                                 FALSE, FALSE, FALSE))),
+                                 label = "Wahlen 2017"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE,
+                                                                 FALSE, FALSE, FALSE,
+                                                                 FALSE, FALSE, FALSE))),
+                                 label = "Wahlen 2013"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE,
+                                                                 FALSE, FALSE, FALSE,
+                                                                 FALSE, FALSE, FALSE,
+                                                                 FALSE, FALSE, FALSE))),
+                                 label = "Wahlen 2009"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE,
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE,
+                                                                 FALSE, FALSE, FALSE))),
+                                 label = "Wahlen 2005"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE,
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE,
+                                                                 FALSE, FALSE, FALSE))),
+                                 label = "Wahlen 2001"),
+                            list(method = "update",
+                                 args = list(list(visible = list(TRUE, TRUE, TRUE,
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE,
+                                                                 FALSE, FALSE, FALSE))),
+                                 label = "Wahlen 1997"))
+                        )
+                      )
+)
+fig
+
+# Daten-Download
+stimmenherkunft <- data.frame(Jahr = stimmherkunft$jahr,
+                              Partei = stimmherkunft$partei,
+                              Stammwaehlende = round(stimmherkunft$stammwaehlende, 0),
+                              Stammwaehlende_KIunten = round(stimmherkunft$stammKIunten, 0),
+                              Stammwaehlende_KIoben = round(stimmherkunft$stammKIoben, 0),
+                              Wechselwaehlende = round(stimmherkunft$wechselwaehlende, 0),
+                              Wechselwaehlende_KIunten = round(stimmherkunft$wechselKIunten, 0),
+                              Wechselwaehlende_KIoben = round(stimmherkunft$wechselKIoben, 0),
+                              Neuwaehlende = round(stimmherkunft$neuwaehlende, 0),
+                              Neuwaehlende_KIunten = round(stimmherkunft$neuKIunten, 0),
+                              Neuwaehlende_KIoben = round(stimmherkunft$neuKIoben, 0))
+
+stimmenherkunft %>% 
+  download_this(output_name = "Stimmenherkunft",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die beiden Grossparteien FBP und VU kommen jeweils auf die höchsten Anteile von Stammwählenden. Viele Wählerinnen und Wähler dieser beiden Parteien haben also bereits vier Jahre zuvor dieselbe Partei gewählt. Die beiden Parteien konnten aber immer auch Wechselwählende und Neuwählende von sich überzeugen. Tiefer liegen die Anteile an Stammwählenden demgegenüber bei den Oppositionsparteien FL und DU.  
+Die Wählerschaft der 2021 erstmals antretenden DpL setzte sich logischerweise vor allem aus Wechselwählenden zusammen. Viele von ihnen wählten vier Jahre zuvor DU. Die DpL konnte darüber hinaus aber auch einige Neuwählende von sich überzeugen. Ein ähnliches Bild zeigte sich bei den Wahlen 2013, als die Du erstmals antrat und vor allem Stimmen von Wechselwählenden gewann.
+ 
+\
+\
+
+## FBP
+
+```{r Stimmenherkunft FBP, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+stimmherkunft <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Stimmherkunft_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+stimmherkunft$beschriftung1  <- paste("[KI: ", 
+                                  round(stimmherkunft$stammKIunten),
+                                  "% - ",
+                                  round(stimmherkunft$stammKIoben),
+                                  "%]", 
+                                  sep="")
+stimmherkunft$beschriftung1[c(13, 21)] <- NA
+stimmherkunft$beschriftung2  <- paste("[KI: ", 
+                                      round(stimmherkunft$wechselKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$wechselKIoben),
+                                      "%]", 
+                                      sep="")
+stimmherkunft$beschriftung3  <- paste("[KI: ", 
+                                      round(stimmherkunft$neuKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$neuKIoben),
+                                      "%]", 
+                                      sep="")
+
+# Farben
+beschriftung <- data.frame(farben = c("#440154FF", "#21908CFF", "#FDE725FF"),
+                           beschr = c("Stammwählende", "Wechselwählende", "Neuwählende"))
+
+# Reihenfolge
+stimmherkunft$partei <- factor(stimmherkunft$partei, levels = c("DpL", "DU", "FL", "VU", "FBP"))
+
+# Plot 
+dat <- stimmherkunft[which(stimmherkunft$partei == "FBP"),]
+dat$jahr <- as.factor(dat$jahr)
+j <- 13
+fig2 <- plot_ly()
+for(i in c(4, 7, 10)){
+  fig2 <- fig2 %>% add_bars(data = dat,
+                            x = dat[,i],
+                            y = ~jahr, 
+                            text = dat[,j],
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(k == 2021, TRUE, FALSE),
+                            marker = list(color = beschriftung$farben[(j-12)]), 
+                            name = beschriftung$beschr[(j-12)],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+  )
+  j <- j+1
+}
+
+fig2 <- config(fig2,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig2 <- fig2 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.7,
+                                    traceorder = "normal"
+                        ),
+                        plot_bgcolor='#f5f5f5'
+                        )
+fig2
+
+# Daten-Download
+stimmenherkunft <- data.frame(Jahr = stimmherkunft$jahr,
+                              Partei = stimmherkunft$partei,
+                              Stammwaehlende = round(stimmherkunft$stammwaehlende, 0),
+                              Stammwaehlende_KIunten = round(stimmherkunft$stammKIunten, 0),
+                              Stammwaehlende_KIoben = round(stimmherkunft$stammKIoben, 0),
+                              Wechselwaehlende = round(stimmherkunft$wechselwaehlende, 0),
+                              Wechselwaehlende_KIunten = round(stimmherkunft$wechselKIunten, 0),
+                              Wechselwaehlende_KIoben = round(stimmherkunft$wechselKIoben, 0),
+                              Neuwaehlende = round(stimmherkunft$neuwaehlende, 0),
+                              Neuwaehlende_KIunten = round(stimmherkunft$neuKIunten, 0),
+                              Neuwaehlende_KIoben = round(stimmherkunft$neuKIoben, 0))
+
+stimmenherkunft %>% 
+  download_this(output_name = "Stimmenherkunft",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Wählerschaft der FBP setzt sich zum Grossteil aus Stammwählenden zusammen. Der Anteil von Neuwählenden liegt demgegenüber meist im einstelligen Prozentbereich. Der Anteil von  Wechselwählenden schwankt zwischen den einzelnen Wahlen. Besonders 2001 und 2021 konnte die FBP relativ viele Wechselwählende von sich überzeugen. 
+
+\
+\
+
+## VU
+
+```{r Stimmenherkunft VU, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+stimmherkunft <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Stimmherkunft_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+stimmherkunft$beschriftung1  <- paste("[KI: ", 
+                                  round(stimmherkunft$stammKIunten),
+                                  "% - ",
+                                  round(stimmherkunft$stammKIoben),
+                                  "%]", 
+                                  sep="")
+stimmherkunft$beschriftung1[c(13, 21)] <- NA
+stimmherkunft$beschriftung2  <- paste("[KI: ", 
+                                      round(stimmherkunft$wechselKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$wechselKIoben),
+                                      "%]", 
+                                      sep="")
+stimmherkunft$beschriftung3  <- paste("[KI: ", 
+                                      round(stimmherkunft$neuKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$neuKIoben),
+                                      "%]", 
+                                      sep="")
+
+# Farben
+beschriftung <- data.frame(farben = c("#440154FF", "#21908CFF", "#FDE725FF"),
+                           beschr = c("Stammwählende", "Wechselwählende", "Neuwählende"))
+
+# Reihenfolge
+stimmherkunft$partei <- factor(stimmherkunft$partei, levels = c("DpL", "DU", "FL", "VU", "FBP"))
+
+# Plot 
+dat <- stimmherkunft[which(stimmherkunft$partei == "VU"),]
+dat$jahr <- as.factor(dat$jahr)
+j <- 13
+fig3 <- plot_ly()
+for(i in c(4, 7, 10)){
+  fig3 <- fig3 %>% add_bars(data = dat,
+                            x = dat[,i],
+                            y = ~jahr, 
+                            text = dat[,j],
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(k == 2021, TRUE, FALSE),
+                            marker = list(color = beschriftung$farben[(j-12)]), 
+                            name = beschriftung$beschr[(j-12)],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+  )
+  j <- j+1
+}
+
+fig3 <- config(fig3,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig3 <- fig3 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.7,
+                                    traceorder = "normal"
+                        ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig3
+
+# Daten-Download
+stimmenherkunft <- data.frame(Jahr = stimmherkunft$jahr,
+                              Partei = stimmherkunft$partei,
+                              Stammwaehlende = round(stimmherkunft$stammwaehlende, 0),
+                              Stammwaehlende_KIunten = round(stimmherkunft$stammKIunten, 0),
+                              Stammwaehlende_KIoben = round(stimmherkunft$stammKIoben, 0),
+                              Wechselwaehlende = round(stimmherkunft$wechselwaehlende, 0),
+                              Wechselwaehlende_KIunten = round(stimmherkunft$wechselKIunten, 0),
+                              Wechselwaehlende_KIoben = round(stimmherkunft$wechselKIoben, 0),
+                              Neuwaehlende = round(stimmherkunft$neuwaehlende, 0),
+                              Neuwaehlende_KIunten = round(stimmherkunft$neuKIunten, 0),
+                              Neuwaehlende_KIoben = round(stimmherkunft$neuKIoben, 0))
+
+stimmenherkunft %>% 
+  download_this(output_name = "Stimmenherkunft",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die VU kann auf eine solide Basis an Stammwählenden aufbauen. Die Mehrheit der Wählenden hatte jeweils bereits vier Jahre zuvor die VU gewählt. Seit 2013 kann aber eine Abnahme im Anteil der Stammwählenden erkannt werden. Bei den letzten Wahlen 2021 konnte die VU dafür auf relativ viele Wechsel- und Neuwählende zählen. 
+\
+\
+
+## FL
+
+```{r Stimmenherkunft FL, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+stimmherkunft <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Stimmherkunft_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+stimmherkunft$beschriftung1  <- paste("[KI: ", 
+                                  round(stimmherkunft$stammKIunten),
+                                  "% - ",
+                                  round(stimmherkunft$stammKIoben),
+                                  "%]", 
+                                  sep="")
+stimmherkunft$beschriftung1[c(13, 21)] <- NA
+stimmherkunft$beschriftung2  <- paste("[KI: ", 
+                                      round(stimmherkunft$wechselKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$wechselKIoben),
+                                      "%]", 
+                                      sep="")
+stimmherkunft$beschriftung3  <- paste("[KI: ", 
+                                      round(stimmherkunft$neuKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$neuKIoben),
+                                      "%]", 
+                                      sep="")
+
+# Farben
+beschriftung <- data.frame(farben = c("#440154FF", "#21908CFF", "#FDE725FF"),
+                           beschr = c("Stammwählende", "Wechselwählende", "Neuwählende"))
+
+# Reihenfolge
+stimmherkunft$partei <- factor(stimmherkunft$partei, levels = c("DpL", "DU", "FL", "VU", "FBP"))
+
+# Plot 
+dat <- stimmherkunft[which(stimmherkunft$partei == "FL"),]
+dat$jahr <- as.factor(dat$jahr)
+j <- 13
+fig4 <- plot_ly()
+for(i in c(4, 7, 10)){
+  fig4 <- fig4 %>% add_bars(data = dat,
+                            x = dat[,i],
+                            y = ~jahr, 
+                            text = dat[,j],
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(k == 2021, TRUE, FALSE),
+                            marker = list(color = beschriftung$farben[(j-12)]), 
+                            name = beschriftung$beschr[(j-12)],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+  )
+  j <- j+1
+}
+
+fig4 <- config(fig4,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig4 <- fig4 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.7,
+                                    traceorder = "normal"
+                        ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig4
+
+# Daten-Download
+stimmenherkunft <- data.frame(Jahr = stimmherkunft$jahr,
+                              Partei = stimmherkunft$partei,
+                              Stammwaehlende = round(stimmherkunft$stammwaehlende, 0),
+                              Stammwaehlende_KIunten = round(stimmherkunft$stammKIunten, 0),
+                              Stammwaehlende_KIoben = round(stimmherkunft$stammKIoben, 0),
+                              Wechselwaehlende = round(stimmherkunft$wechselwaehlende, 0),
+                              Wechselwaehlende_KIunten = round(stimmherkunft$wechselKIunten, 0),
+                              Wechselwaehlende_KIoben = round(stimmherkunft$wechselKIoben, 0),
+                              Neuwaehlende = round(stimmherkunft$neuwaehlende, 0),
+                              Neuwaehlende_KIunten = round(stimmherkunft$neuKIunten, 0),
+                              Neuwaehlende_KIoben = round(stimmherkunft$neuKIoben, 0))
+
+stimmenherkunft %>% 
+  download_this(output_name = "Stimmenherkunft",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Anteile von Stammwählenden der FL liegen tiefer als diejenigen der beiden Grossparteien FBP und VU. Gleichwohl machen Stammwählende meist mindestens die Hälfte der FL-Wählenden aus. Auffällig sind die relativ hohen Anteile an Neuwählenden. Dies kann unter anderem damit erklärt werden, dass die FL viele Stimmen von jungen Personen gewinnt. 
+\
+\
+
+## DU
+
+```{r Stimmenherkunft DU, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=2}
+# Datensatz einlesen:
+stimmherkunft <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Stimmherkunft_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+stimmherkunft$beschriftung1  <- paste("[KI: ", 
+                                  round(stimmherkunft$stammKIunten),
+                                  "% - ",
+                                  round(stimmherkunft$stammKIoben),
+                                  "%]", 
+                                  sep="")
+stimmherkunft$beschriftung1[c(13, 21)] <- NA
+stimmherkunft$beschriftung2  <- paste("[KI: ", 
+                                      round(stimmherkunft$wechselKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$wechselKIoben),
+                                      "%]", 
+                                      sep="")
+stimmherkunft$beschriftung3  <- paste("[KI: ", 
+                                      round(stimmherkunft$neuKIunten),
+                                      "% - ",
+                                      round(stimmherkunft$neuKIoben),
+                                      "%]", 
+                                      sep="")
+
+# Farben
+beschriftung <- data.frame(farben = c("#440154FF", "#21908CFF", "#FDE725FF"),
+                           beschr = c("Stammwählende", "Wechselwählende", "Neuwählende"))
+
+# Reihenfolge
+stimmherkunft$partei <- factor(stimmherkunft$partei, levels = c("DpL", "DU", "FL", "VU", "FBP"))
+
+# Plot 
+dat <- stimmherkunft[which(stimmherkunft$partei == "DU"),]
+dat$jahr <- as.factor(dat$jahr)
+j <- 13
+fig5 <- plot_ly()
+for(i in c(4, 7, 10)){
+  fig5 <- fig5 %>% add_bars(data = dat,
+                            x = dat[,i],
+                            y = ~jahr, 
+                            text = dat[,j],
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(k == 2021, TRUE, FALSE),
+                            marker = list(color = beschriftung$farben[(j-12)]), 
+                            name = beschriftung$beschr[(j-12)],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+  )
+  j <- j+1
+}
+
+fig5 <- config(fig5,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig5 <- fig5 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.7,
+                                    traceorder = "normal"
+                        ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig5
+
+# Daten-Download
+stimmenherkunft <- data.frame(Jahr = stimmherkunft$jahr,
+                              Partei = stimmherkunft$partei,
+                              Stammwaehlende = round(stimmherkunft$stammwaehlende, 0),
+                              Stammwaehlende_KIunten = round(stimmherkunft$stammKIunten, 0),
+                              Stammwaehlende_KIoben = round(stimmherkunft$stammKIoben, 0),
+                              Wechselwaehlende = round(stimmherkunft$wechselwaehlende, 0),
+                              Wechselwaehlende_KIunten = round(stimmherkunft$wechselKIunten, 0),
+                              Wechselwaehlende_KIoben = round(stimmherkunft$wechselKIoben, 0),
+                              Neuwaehlende = round(stimmherkunft$neuwaehlende, 0),
+                              Neuwaehlende_KIunten = round(stimmherkunft$neuKIunten, 0),
+                              Neuwaehlende_KIoben = round(stimmherkunft$neuKIoben, 0))
+
+stimmenherkunft %>% 
+  download_this(output_name = "Stimmenherkunft",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Rund ein Drittel der DU-Wählenden entschieden sich auch vier Jahre zuvor für die DU. Diese Werte liegen tiefer als bei den Grossparteien und der FL. Dafür profitierte die DU jeweils von relativ hohen Anteilen von Wechselwählenden, also von Personen, die zuvor für eine andere Partei votiert hatten. 
+\
+\
+
+
+# Methodische Anmerkungen zu den Umfragen {#methode}
+
+Seit 1997 hat das Liechtenstein-Institut zu allen Landtagswahlen Umfragen durchgeführt. Befragt wurden jeweils stimmberechtigte Liechtensteinerinnen und Liechtensteiner. Die Daten der Grafiken auf dieser Seite beschränken sich jedoch auf Personen, die (gemäss eigenen Angaben) an den Wahlen auch tatsächlich teilgenommen haben. 
+
+Über die Befragungsmethode und die Anzahl befragter Personen gibt die folgende Tabelle Auskunft:
+\
+
+
+```{r Datenanhang, echo=FALSE, warning=FALSE}
+umfragen <- read.csv("C:/Users/pr/Datenpool/Daten/Umfragen_Landtagswahlen.csv",
+                     header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Variable umbenennen
+names(umfragen)[1] <- "Datum"
+
+# Datum definieren:
+umfragen$Datum<-as.Date(umfragen$Datum, format="%d.%m.%Y")
+
+# Tabelle
+reactable(umfragen,
+          columns = list(
+            Datum = colDef(align = "center"),
+            Anzahl.Befragte = colDef(name = "Anz. Befragte",
+                                     align = "center")
+            ),
+          showSortIcon = TRUE,
+          highlight = TRUE,
+          outlined = TRUE
+          )
+```
+\
+Die Umfragedaten wurden jeweils nach soziodemographischen (Geschlecht, Alter) und politischen Indikatoren (Wahlentscheid) gewichtet. Trotzdem bleibt eine Umfrage immer eine Momentaufnahme, die vom jeweiligen gesellschaftlichen, politischen,  wirtschaftlichen und persönlichen Kontext beeinflusst ist. 
+
+Grundsätzlich sind Umfragen immer mit einer gewissen statistischen Unsicherheit behaftet, schliesslich können kaum je alle Wählerinnen und Wähler - in der Statistik spricht man von der "Grundgesamtheit" - befragt werden. Stattdessen bedient man sich einer Teilmenge aller Stimmberechtigter ("Stichprobe"), aus der man die interessierenden Parameter wie Anteilswerte oder Mittelwerte berechnet. Dabei bleibt der wahre Wert der Grundgesamtheit zwar unbekannt, aber mit statistischen Schätzverfahren ist es möglich, einen Wertebereich (**"Konfidenz- oder Vertrauensintervall"**) zu eruieren, der den wahren Wert mit einer gewissen Wahrscheinlichkeit enthält. In den auf dieser Seite aufgeführten Grafiken werden jeweils die 90%igen Vertrauensintervalle ausgewiesen. Diese können bei Liniengrafiken mit einem Klick auf die entsprechenden Legendeneinträge (rechts neben den Grafiken) ein-/ausgeblendet werden. Bei Balkengrafiken werden die Konfidenzintervalle angezeigt, wenn man den Cursor auf die entsprechenden Grafiken bewegt (Abkürzung "KI"). Ein 90%-Konfidenzintervall gibt den Wertebereich an, der den wahren Wert der Grundgesamtheit mit einer Wahrscheinlichkeit von 90% enthält.
+
+\
+

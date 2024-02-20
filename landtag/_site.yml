@@ -1,0 +1,16 @@
+name: "my-website"
+navbar:
+  title: "Datenpool: Landtag"
+  left:
+    - text: "Home"
+      href: index.html
+   # - text: "About"
+   #   href: about.html
+    - text: "Mandate"
+      href: Landtag_2_Mandate.html
+    - text: "Landtagswahlen"
+      href: Landtag_3_Landtagswahlen.html
+    - text: "Umfragen Landtagswahlen"
+      href: Landtag_4_Umfragen.html
+    - text: "Meinungen zum Landtag"
+      href: Landtag_5_Meinungen.html

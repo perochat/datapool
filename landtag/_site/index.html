@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Landtag</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Datenpool: Landtag</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Landtag_2_Mandate.html">Mandate</a>
+</li>
+<li>
+  <a href="Landtag_3_Landtagswahlen.html">Landtagswahlen</a>
+</li>
+<li>
+  <a href="Landtag_4_Umfragen.html">Umfragen Landtagswahlen</a>
+</li>
+<li>
+  <a href="Landtag_5_Meinungen.html">Meinungen zum Landtag</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Landtag</h1>
+
+</div>
+
+
+<p>Der Landtag ist das Parlament des Fürstentums Liechtenstein und damit
+“das gesetzmässige Organ der Gesamtheit der Landesangehörigen” (<a
+href="https://verfassung.li/Art._45">Art. 45 Landesverfassung</a>). Von
+1921 bis 1988 zählte er 15 Abgeordnete, wobei neun Sitze auf das
+Oberland und sechs Sitze auf das Unterland entfielen. Im Jahre 1988
+wurde der Landtag nach einer vom Volk angenommenen Verfassungsänderung
+auf <strong>25 Abgeordnete</strong> erweitert (15 aus dem Oberland und
+10 aus dem Unterland) (<a
+href="https://www.gesetze.li/chrono/1988011000">LGBl. 1988.011</a>). Die
+Erhöhung kam erstmals bei den Landtagswahlen 1989 zur Anwendung.</p>
+<p>Die Berechtigung zur Wahl der Landtagsabgeordneten erfuhr im Laufe
+der Zeit verschiedene Änderungen. So wurde das
+<strong>Wahlrechtsalter</strong> schrittweise gesenkt, erstmals mit dem
+Volksrechtegesetz von 1922 von 24 auf 21 Jahre (<a
+href="https://www.gesetze.li/chrono/1922028000">LGBl. 1922.028</a>).
+Eine weitere Senkung des Wahlalters von 21 auf 20 Jahre fand im Jahre
+1969 statt (<a href="https://www.gesetze.li/chrono/1969048000">LGBl.
+1969.048</a>), gefolgt von einer Herabsetzung auf 18 Jahre im Jahre 2000
+(<a href="https://www.gesetze.li/chrono/2000055000">LGBl. 2000.055</a>).
+Das <strong>Frauenstimm- und -wahlrecht</strong> in
+Landesangelegenheiten wurde nach der Volksabstimmung vom 29. Juni / 1.
+Juli 1984 eingeführt (<a
+href="https://www.gesetze.li/chrono/1984027000">LGBl. 1984.027</a>).</p>
+<p>Im Jahre 1939 fand der Wechsel vom zuvor geltenden Majorz- zum
+<strong>Proporzwahlrecht</strong> statt (<a
+href="https://www.gesetze.li/chrono/1939003000">LGBl. 1939.003</a>).
+Dabei galt jede eingereichte Wahlliste als Listenstimme für die
+betreffende Partei (Listenproporz), wobei veränderte Wahllisten der
+Partei mit den meisten Kandidaten auf der Liste zugesprochen wurden. Im
+Jahre 1973 folgte schliesslich der Wechsel vom Listen- zum
+<strong>Kandidierendenproporz</strong> (<a
+href="https://www.gesetze.li/konso/1973050000">LGBl. 1973.050</a>).
+Seither entscheiden nicht mehr die Listenstimmen, sondern die
+Kandidierenden- und Zusatzstimmen über die Verteilung der Mandate auf
+die verschiedenen Parteien.</p>
+<p>Seit 1945 haben fünf Parteien den Einzug in den Landtag geschafft:
+Die beiden bürgerlichen Grossparteien <strong>Fortschrittliche
+Bürgerpartei (FBP)</strong> und <strong>Vaterländische Union
+(VU)</strong>, seit 1993 die linke Oppositionspartei <strong>Freie Liste
+(FL)</strong> sowie die beiden rechten Oppositionsparteien <strong>DU -
+Die Unabhängigen für Liechtenstein</strong> (2013-2017) und
+<strong>Demokraten pro Liechtenstein (DpL)</strong> (2021).</p>
+<p>Das <a
+href="https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt">Liechtenstein-Institut</a>
+führt seit 1997 <strong>Umfragen zu den Landtagswahlen</strong> durch.
+Entsprechende Daten sind auf der Seite “Umfragen zu den Landtagswahlen”
+dargestellt.</p>
+<p><br />
+<br />
+</p>
+<div id="literatur-des-liechtenstein-instituts" class="section level1">
+<h1>Literatur des Liechtenstein-Instituts</h1>
+<p>Beck, Roger (2013): <a
+href="https://www.eliechtensteinensia.li/viewer/image/000474913/1/">Rechtliche
+Ausgestaltung, Arbeitsweise und Reformbedarf des liechtensteinischen
+Landtags.</a> Schaan: Verlag der Liechtensteinischen Akademischen
+Gesellschaft (Liechtenstein Politische Schriften, Bd. 53)</p>
+<p>Frommelt, Christian; Milic, Thomas; Rochat, Philippe (2021): <a
+href="https://www.liechtenstein-institut.li/publikationen/frommelt-christian-milic-thomas-rochat-philippe-2021-landtagswahlen-2021-ergebnisse-der-wahlumfrage-bendern-beitraege-liechtenst">Landtagswahlen
+2021 – Ergebnisse der Wahlumfrage.</a> Bendern (Beiträge
+Liechtenstein-Institut, 49)</p>
+<p>Marxer, Wilfried (2017): <a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-2017-landtagswahlen-vom-5-februar-2017-ergebnisse-einer-umfrage-bendern-li-aktuell-12017">Landtagswahlen
+vom 5. Februar 2017. Ergebnisse einer Umfrage.</a> Bendern (LI Aktuell
+1/2017)</p>
+<p>Marxer, Wilfried (2013): <a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-2013-landtagswahlen-2013-frauen-im-fokus-bendern-arbeitspapiere-liechtenstein-institut-41">Landtagswahlen
+2013 - Frauen im Fokus.</a> Bendern (Arbeitspapiere
+Liechtenstein-Institut, 41)</p>
+<p>Marxer, Wilfried (2009): <a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-2009-landtagswahlen-2009-regierungsbildung-und-wahlerpraferenzen-liechtenstein-bendern-arbeitspapiere-liechtenst">Landtagswahlen
+2009: Regierungsbildung und Wählerpräferenzen in Liechtenstein.</a>
+Bendern (Arbeitspapiere Liechtenstein-Institut, 23)</p>
+<p>Marxer, Wilfried (2005): <a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-2005-einflusse-der-verfassungsabstimmung-auf-die-landtagswahlen-2005-thesen-befunde-interpretationen-analysen-zu">Einflüsse
+der Verfassungsabstimmung auf die Landtagswahlen 2005 - Thesen, Befunde,
+Interpretationen. Analysen zu den Landtagswahlen 2005 in Liechtenstein
+(II).</a> Bendern (Beiträge Liechtenstein-Institut, 31)</p>
+<p>Marxer, Wilfried (2005):<a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-2005-wahlchancen-von-frauen-der-liechtensteinischen-politik-analysen-zu-den-landtagswahlen-2005-liechtenstein-i">Wahlchancen
+von Frauen in der liechtensteinischen Politik. Analysen zu den
+Landtagswahlen 2005 in Liechtenstein (I).</a> Bendern (Beiträge
+Liechtenstein-Institut, 30)</p>
+<p>Marxer, Wilfried (2000): <a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-2000-wahlverhalten-und-wahlmotive-im-furstentum-liechtenstein-diss-univ-zurich-vaduz-verlag-der-liechtensteinisc">Wahlverhalten
+und Wahlmotive im Fürstentum Liechtenstein.</a> Diss. Univ. Zürich.
+Vaduz: Verlag der Liechtensteinischen Akademischen Gesellschaft
+(Liechtenstein Politische Schriften, Bd. 30)</p>
+<p>Marxer, Wilfried (1997): <a
+href="https://www.liechtenstein-institut.li/publikationen/marxer-wilfried-1997-landtagswahlen-vom-2-februar-1997-wahlergebnis-der-frauen-resultate-einer-reprasentativen-volksbefragung-un">Landtagswahlen
+vom 2. Februar 1997: Wahlergebnis der Frauen. Resultate einer
+repräsentativen Volksbefragung und von schriftlichen Umfragen bei den
+Landtagskandidatinnen und den Ortsgruppenvorsitzenden der Parteien.</a>
+(Hg. Regierung des Fürstentums Liechtenstein). Vaduz</p>
+<p>Wille, Herbert (2015): <a
+href="https://www.liechtenstein-institut.li/publikationen/wille-herbert-2015-die-liechtensteinische-staatsordnung-verfassungsgeschichtliche-grundlagen-und-oberste-organe-schaan-verlag-de">Die
+liechtensteinische Staatsordnung. Verfassungsrechtliche Grundlagen und
+oberste Organe.</a> Schaan: Verlag der Liechtensteinischen Akademischen
+Gesellschaft (Liechtenstein Politische Schriften, Bd. 57)</p>
+<p>Vogt, Paul (2011): <a
+href="https://historisches-lexikon.li/Landtag">Landtag.</a> In:
+Historisches Lexikon des Fürstentums Liechtenstein online (eHLFL).</p>
+<p>Waschkuhn, Arno (1994): <a
+href="https://www.liechtenstein-institut.li/publikationen/waschkuhn-arno-1994-politisches-system-liechtensteins-kontinuitat-und-wandel-vaduz-verlag-der-liechtensteinischen-akademischen-g">Politisches
+System Liechtensteins: Kontinuität und Wandel.</a> Vaduz: Verlag der
+Liechtensteinischen Akademischen Gesellschaft (Liechtenstein Politische
+Schriften, Bd. 18)<br />
+<br />
+</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

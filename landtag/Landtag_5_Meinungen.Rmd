@@ -1,0 +1,1290 @@
+---
+#title: "Meinungen zum Landtag"
+title: "&#32;"
+#author: "Philippe"
+#date: "2024-02-12"
+output:  
+  html_document
+    #:
+    #toc: true
+    #toc_depth: 4
+    #toc_float: true
+  #toc: default
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE, echo=FALSE}
+library(plotly)
+library(reactable)
+library(downloadthis)
+library(car)
+```
+
+```{r Datum, echo=FALSE, warning=FALSE}
+current_date <- Sys.Date()
+current_date <- format(current_date, "%d.%m.%Y")
+```
+
+*Stand `r current_date`*
+\
+\
+
+
+In der Umfrage zu den Landtagswahlen 2021 wurden auch verschiedene Ansichten und Meinungen zum Landtag erhoben. So wurde gefragt, wie wichtig den Wählerinnen und Wählern eine ausgewogene Zusammensetzung des Landtags mit Blick auf die Geschlechter, Alters- und Berufsgruppen sowie Gemeinden ist, welche Bedeutung sie einer starken Opposition beimessen und inwieweit sie die Ansicht teilen, dass Regierung und Landtag eh machen, was sie wollen.   
+\
+\
+
+# Ausgewogene Zusammensetzung  {.tabset} 
+
+Wie wichtig ist den Stimmberechtigten eine möglichst ausgewogene Zusammensetzung des Landtags mit Blick auf die Geschlechter, Berufs- und Altersgruppen sowie die Gemeinden? Dies wurde bei der Umfrage zu den Landtagswahlen 2021 erstmals erhoben. Die Fragestellung lautete: **"Wie wichtig sind für Sie die folgenden Kriterien mit Blick auf die Zusammensetzung des Landtages?"**  
+\
+
+## Alle
+
+```{r Ausgewogenheit, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+repraesentation <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Repraesentation_Umfrage.csv",
+                            header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Plot
+fig <- plot_ly()
+daten <- repraesentation[which(repraesentation$auspraegung == "sehr wichtig"),]
+daten$was <- factor(daten$was, levels = c(as.character(daten$was)))
+fig <- fig %>% add_bars(data = daten,
+                        x = ~werte,
+                        y = ~was, 
+                        text = ~KIbeschriftung,
+                        textposition = "none",
+                        orientation = "h",
+                        marker = list(color = "#00B050FF"), 
+                        name = "sehr wichtig",
+                        hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+)
+daten <- repraesentation[which(repraesentation$auspraegung == "eher wichtig"),]
+daten$was <- factor(daten$was, levels = c(as.character(daten$was)))
+fig <- fig %>% add_bars(data = daten,
+                        x = ~werte,
+                        y = ~was, 
+                        text = ~KIbeschriftung,
+                        textposition = "none", 
+                        orientation = "h",
+                        marker = list(color = "#93DFB8"), 
+                        name = "eher wichtig",
+                        hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+)
+daten <- repraesentation[which(repraesentation$auspraegung == "weiss nicht"),]
+daten$was <- factor(daten$was, levels = c(as.character(daten$was)))
+fig <- fig %>% add_bars(data = daten,
+                        x = ~werte,
+                        y = ~was, 
+                        text = ~KIbeschriftung,
+                        textposition = "none", 
+                        orientation = "h",
+                        marker = list(color = "grey"), 
+                        name = "weiss nicht",
+                        hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+)
+daten <- repraesentation[which(repraesentation$auspraegung == "eher unwichtig"),]
+daten$was <- factor(daten$was, levels = c(as.character(daten$was)))
+fig <- fig %>% add_bars(data = daten,
+                        x = ~werte,
+                        y = ~was, 
+                        text = ~KIbeschriftung,
+                        textposition = "none", 
+                        orientation = "h",
+                        marker = list(color = "#FF9980"), 
+                        name = "eher unwichtig",
+                        hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+)
+daten <- repraesentation[which(repraesentation$auspraegung == "überhaupt nicht wichtig"),]
+daten$was <- factor(daten$was, levels = c(as.character(daten$was)))
+fig <- fig %>% add_bars(data = daten,
+                        x = ~werte,
+                        y = ~was, 
+                        text = ~KIbeschriftung,
+                        textposition = "none", 
+                        orientation = "h",
+                        marker = list(color = "red"), 
+                        name = "überhaupt nicht wichtig",
+                        hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+)
+rm(daten)
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v"
+                                  ,
+                                  y=0.9,
+                                  #x=-0.6,
+                                  traceorder = "normal"
+                      ),
+                      plot_bgcolor='#f5f5f5'
+)
+fig
+
+# Daten-Download
+reptot <- data.frame(Gruppe = repraesentation$was,
+                     Auspraegung = repraesentation$auspraegung,
+                     Anteil = round(repraesentation$werte, 0),
+                     KI_unten = round(repraesentation$KIunten, 0),
+                     KI_oben = round(repraesentation$KIoben, 0))
+
+reptot %>% 
+  download_this(output_name = "Repraesentation_Alle",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Vertretung möglichst vieler Berufsgruppen ist das insgesamt wichtigste der vier abgefragten Repräsentationskriterien. Rund 85 Prozent erachten es als sehr oder eher wichtig. Die hohe Bedeutung einer ausgewogenen Repräsentation unterschiedlicher Berufsgruppen kann auch als Bekenntnis zum System des Milizparlaments gewertet werden.  
+An zweiter Stelle folgt die ausgewogene Vertretung der Altersgruppen, die drei von vier Wählenden wichtig ist. Etwas tiefer liegen die Anteile mit Blick auf die ausgewogene Vertretung der Geschlechter und Gemeinden. Doch auch diese beiden Kriterien werden von über der Hälfte der Befragten als sehr oder eher wichtig erachtet.  
+\
+\
+
+## ausgewogenen Vertretung der Altersgruppen
+
+```{r Ausgewogenheit Alter, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+alter <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Repraesentation_Alter_Umfrage.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+alter$KIbeschriftung <- paste("[KI: ", 
+                              round(alter$KIunten),
+                              "% - ",
+                              round(alter$KIoben),
+                              "%]", 
+                              sep="")
+
+# Auswahl Traces
+auswahl <- data.frame(beschriftung = unique(alter$beschriftung),
+                      farben = c("#00B050FF", "#93DFB8", "grey",
+                                 "#FF9980", "red"))
+
+# Plot
+fig <- plot_ly()
+for(j in c("Partei", "Geschlecht", "Alter")){
+  daten <- alter[alter$was == j,]
+  daten$auspraegung <- factor(daten$auspraegung, 
+                              levels = c(as.character(unique(daten$auspraegung))))
+  for(i in 1:5){
+    fig <- fig %>% add_bars(data = daten[daten$beschriftung == auswahl$beschriftung[i],],
+                            x = ~werte,
+                            y = ~auspraegung, 
+                            text = ~KIbeschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(j == "Partei", TRUE, FALSE),
+                            marker = list(color = auswahl$farben[i]), 
+                            name = auswahl$beschriftung[i],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+    )
+  }
+}
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.7,
+                                  traceorder = "normal"
+                      ),
+                      plot_bgcolor='#f5f5f5',
+                      updatemenus = list(
+                        list(
+                          y=0.92,
+                          x=1.27,
+                          xanchor="right",
+                          buttons = list(
+                            list(method = "update",
+                                 args = list(list(visible = list(TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Partei"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Geschlecht"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE))),
+                                 label = "Alter"))
+                        )
+                      )
+)
+fig
+
+# Daten-Download
+repalt <- data.frame(Gruppe = alter$auspraegung,
+                     Auspraegung = alter$beschriftung,
+                     Anteil = round(alter$werte, 0),
+                     KI_unten = round(alter$KIunten, 0),
+                     KI_oben = round(alter$KIoben, 0))
+
+repalt %>% 
+  download_this(output_name = "Repraesentation_Altersgruppen",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Wählerschaften von allen fünf Parteien sprechen sich klar für eine ausgewogene Vertretung der Altersgruppen aus. Am stärksten ist dieser Wunsch unter den Wählerinnen und Wählern der FL. Die Unterschiede zu den anderen Wählerschaften sind aber nicht allzu gross. Auch zwischen den Geschlechtern und zwischen den Altersgruppen sind die Unterschiede insgesamt eher gering, wobei Frauen und Personen zwischen 18 und 34 Jahren eine angemessene Altersrepräsentation etwas häufiger als sehr wichtig erachten. 
+\
+\
+
+## ausgewogene Vertretung der Geschlechter
+
+```{r Ausgewogenheit Geschlechter, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+geschlechter <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Repraesentation_Geschlechter_Umfrage.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+geschlechter$KIbeschriftung <- paste("[KI: ", 
+                              round(geschlechter$KIunten),
+                              "% - ",
+                              round(geschlechter$KIoben),
+                              "%]", 
+                              sep="")
+
+# Auswahl Traces
+auswahl <- data.frame(beschriftung = unique(geschlechter$beschriftung),
+                      farben = c("#00B050FF", "#93DFB8", "grey",
+                                 "#FF9980", "red"))
+
+# Plot
+fig <- plot_ly()
+for(j in c("Partei", "Geschlecht", "Alter")){
+  daten <- geschlechter[geschlechter$was == j,]
+  daten$auspraegung <- factor(daten$auspraegung, 
+                              levels = c(as.character(unique(daten$auspraegung))))
+  for(i in 1:5){
+    fig <- fig %>% add_bars(data = daten[daten$beschriftung == auswahl$beschriftung[i],],
+                            x = ~werte,
+                            y = ~auspraegung, 
+                            text = ~KIbeschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(j == "Partei", TRUE, FALSE),
+                            marker = list(color = auswahl$farben[i]), 
+                            name = auswahl$beschriftung[i],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+    )
+  }
+}
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.7,
+                                  traceorder = "normal"
+                      ),
+                      plot_bgcolor='#f5f5f5',
+                      updatemenus = list(
+                        list(
+                          y=0.92,
+                          x=1.27,
+                          xanchor="right",
+                          buttons = list(
+                            list(method = "update",
+                                 args = list(list(visible = list(TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Partei"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Geschlecht"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE))),
+                                 label = "Alter"))
+                        )
+                      )
+)
+fig
+
+# Daten-Download
+repges <- data.frame(Gruppe = geschlechter$auspraegung,
+                     Auspraegung = geschlechter$beschriftung,
+                     Anteil = round(geschlechter$werte, 0),
+                     KI_unten = round(geschlechter$KIunten, 0),
+                     KI_oben = round(geschlechter$KIoben, 0))
+
+repges %>% 
+  download_this(output_name = "Repraesentation_Geschlechter",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Eine ausgewogene Vertretung der Geschlechter im Landtag liegt vor allem den Wählenden der FL am Herzen. Der Hälfte der Befragten ist dies sehr, einem weiteren Drittel eher wichtig. Doch auch den anderen Wählerschaften ist ein ausgewogenes Geschlechterverhältnis durchaus wichtig. Bei den Grossparteien ist es rund die Hälfte, die einer ausgewogenen Geschlechterrepräsentation Bedeutung beimisst. Bei DU- und DpL-Wählenden liest dieser Anteil etwas tiefer. Darüber hinaus sprechen sich vor allem Frauen und Personen im Pensionsalter dafür aus. 
+\
+\
+
+## Vertretung möglichst vieler Berufsgruppen
+
+```{r Ausgewogenheit Beruf, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+beruf <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Repraesentation_Beruf_Umfrage.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+beruf$KIbeschriftung <- paste("[KI: ", 
+                              round(beruf$KIunten),
+                              "% - ",
+                              round(beruf$KIoben),
+                              "%]", 
+                              sep="")
+
+# Auswahl Traces
+auswahl <- data.frame(beschriftung = unique(beruf$beschriftung),
+                      farben = c("#00B050FF", "#93DFB8", "grey",
+                                 "#FF9980", "red"))
+
+# Plot
+fig <- plot_ly()
+for(j in c("Partei", "Geschlecht", "Alter")){
+  daten <- beruf[beruf$was == j,]
+  daten$auspraegung <- factor(daten$auspraegung, 
+                              levels = c(as.character(unique(daten$auspraegung))))
+  for(i in 1:5){
+    fig <- fig %>% add_bars(data = daten[daten$beschriftung == auswahl$beschriftung[i],],
+                            x = ~werte,
+                            y = ~auspraegung, 
+                            text = ~KIbeschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(j == "Partei", TRUE, FALSE),
+                            marker = list(color = auswahl$farben[i]), 
+                            name = auswahl$beschriftung[i],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+    )
+  }
+}
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.7,
+                                  traceorder = "normal"
+                      ),
+                      plot_bgcolor='#f5f5f5',
+                      updatemenus = list(
+                        list(
+                          y=0.92,
+                          x=1.27,
+                          xanchor="right",
+                          buttons = list(
+                            list(method = "update",
+                                 args = list(list(visible = list(TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Partei"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Geschlecht"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE))),
+                                 label = "Alter"))
+                        )
+                      )
+)
+fig
+
+# Daten-Download
+repber <- data.frame(Gruppe = beruf$auspraegung,
+                     Auspraegung = beruf$beschriftung,
+                     Anteil = round(beruf$werte, 0),
+                     KI_unten = round(beruf$KIunten, 0),
+                     KI_oben = round(beruf$KIoben, 0))
+
+repber %>% 
+  download_this(output_name = "Repraesentation_Berufsgruppen",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Berufsgruppen ist das insgesamt wichtigste der vier abgefragten Repräsentationskriterien. Der Wunsch nach einer angemessen Vertretung möglichst vieler Berufsgruppen ist bei den Wählenden von DU und DpL am stärksten ausgeprägt. Über die Hälfte erachten es als sehr wichtig. Doch auch in den Wählerschaften der anderen Parteien sprechen sich klare Mehrheiten sehr oder eher stark für eine angemessen Vertretung aus. Zwischen den Geschlechtern und zwischen den Altersgruppen gibt es nur geringfügige Unterschiede. 
+\
+\
+
+## Vertretung möglichst vieler Gemeinden
+
+```{r Ausgewogenheit Gemeinden, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3}
+# Datensatz einlesen:
+gemeinden <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Repraesentation_Gemeinden_Umfrage.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+gemeinden$KIbeschriftung <- paste("[KI: ", 
+                              round(gemeinden$KIunten),
+                              "% - ",
+                              round(gemeinden$KIoben),
+                              "%]", 
+                              sep="")
+
+# Auswahl Traces
+auswahl <- data.frame(beschriftung = unique(gemeinden$beschriftung),
+                      farben = c("#00B050FF", "#93DFB8", "grey",
+                                 "#FF9980", "red"))
+
+# Plot
+fig <- plot_ly()
+for(j in c("Partei", "Geschlecht", "Alter")){
+  daten <- gemeinden[gemeinden$was == j,]
+  daten$auspraegung <- factor(daten$auspraegung, 
+                              levels = c(as.character(unique(daten$auspraegung))))
+  for(i in 1:5){
+    fig <- fig %>% add_bars(data = daten[daten$beschriftung == auswahl$beschriftung[i],],
+                            x = ~werte,
+                            y = ~auspraegung, 
+                            text = ~KIbeschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            visible = ifelse(j == "Partei", TRUE, FALSE),
+                            marker = list(color = auswahl$farben[i]), 
+                            name = auswahl$beschriftung[i],
+                            hovertemplate=paste("%{x:.0f}%", "<br>%{text}", sep=" ")
+    )
+  }
+}
+
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.7,
+                                  traceorder = "normal"
+                      ),
+                      plot_bgcolor='#f5f5f5',
+                      updatemenus = list(
+                        list(
+                          y=0.92,
+                          x=1.27,
+                          xanchor="right",
+                          buttons = list(
+                            list(method = "update",
+                                 args = list(list(visible = list(TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Partei"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE))),
+                                 label = "Geschlecht"),
+                            list(method = "update",
+                                 args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                                 FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                                 TRUE, TRUE, TRUE, TRUE, TRUE))),
+                                 label = "Alter"))
+                        )
+                      )
+)
+fig
+
+# Daten-Download
+repgem <- data.frame(Gruppe = gemeinden$auspraegung,
+                     Auspraegung = gemeinden$beschriftung,
+                     Anteil = round(gemeinden$werte, 0),
+                     KI_unten = round(gemeinden$KIunten, 0),
+                     KI_oben = round(gemeinden$KIoben, 0))
+
+repgem %>% 
+  download_this(output_name = "Repraesentation_Gemeinden",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Eine ausgewogene Vertretung der Gemeinden im Landtag ist für etwa 54 Prozent der Wählenden sehr oder eher wichtig. Die Unterschiede zwischen den Wählerschaften der verschiedenen Parteien sind vergleichsweise gering. Die FL-Wählenden messen diesem Kriterium die geringste Bedeutung bei. Am wichtigsten ist es den Wählerinnen und Wählern der VU und der DpL.  
+Männer und Personen im Alter zwischen 35 und 49 Jahren erachten eine ausgewogene Vertretung der Gemeinden etwas häufiger als überhaupt nicht wichtig. 
+\
+\
+
+# Bedeutung einer starken Opposition  {.tabset}
+
+In der Umfrage zu den Landtagswahlen 2021 wurden die Stimmberechtigten nach der wahrgenommenen Bedeutung einer starken Opposition gefragt. Die Fragestellung lautete: **Wie wichtig ist ihrer Meinung nach, dass im Landtag eine starke Opposition vertreten ist?**  
+\
+
+## Total
+
+```{r starke Opposition Total, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=2}
+# Datensatz einlesen:
+opposition <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Opposition_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+opposition$beschriftung  <- paste("[KI: ", 
+                                  round(opposition$KIunten),
+                                  "% - ",
+                                  round(opposition$KIoben),
+                                  "%]", 
+                                  sep="")
+
+# Reihenfolge
+opposition$Gruppe <- factor(opposition$Gruppe, 
+                                 levels=c(as.character(unique(opposition$Gruppe))))
+
+# Farben
+opposition$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 1: Total
+fig <- plot_ly()
+daten <- opposition[opposition$Gruppe == "Total",]
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig <- fig %>% add_bars(data = dat,
+                          x = ~werte,
+                          y = ~Gruppe, 
+                          text = ~beschriftung,
+                          textposition = "none",
+                          orientation = "h",
+                          marker = list(color = dat$farben), 
+                          visible = TRUE,
+                          legendgroup = ~Antwort,
+                          name = ~Antwort,
+                          hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.9,
+                                  x=1,
+                                  traceorder = "normal"
+                                  ),
+                      plot_bgcolor='#f5f5f5'
+                      )
+fig
+
+# Daten-Download Total
+opptot <- data.frame(Gruppe = opposition$Gruppe,
+                     Auspraegung = opposition$Antwort,
+                     Anteil = round(opposition$werte, 0),
+                     KI_unten = round(opposition$KIunten, 0),
+                     KI_oben = round(opposition$KIoben, 0))
+opptot <- opptot[opptot$Gruppe == "Total",]
+
+opptot %>% 
+  download_this(output_name = "Opposition_Total",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Über 70 Prozent der Wählenden wünschen sich eine starke Opposition im Landtag. Nur eine kleine Minderheit erachtet eine starke Opposition als überhaupt nicht wichtig. 
+\
+\
+
+## Partei
+
+```{r starke Opposition Partei, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=4}
+# Datensatz einlesen:
+opposition <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Opposition_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+opposition$beschriftung  <- paste("[KI: ", 
+                                  round(opposition$KIunten),
+                                  "% - ",
+                                  round(opposition$KIoben),
+                                  "%]", 
+                                  sep="")
+
+
+# Farben
+opposition$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 2: Partei
+daten <- opposition[opposition$Gruppe %in% c("DpL", "DU", "FL", "VU", "FBP"),]
+daten$Gruppe <- factor(daten$Gruppe, levels=c(as.character(unique(daten$Gruppe))))
+
+fig2 <- plot_ly()
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig2 <- fig2 %>% add_bars(data = dat,
+                            x = ~werte,
+                            y = ~Gruppe, 
+                            text = ~beschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            marker = list(color = dat$farben), 
+                            visible = TRUE,
+                            legendgroup = ~Antwort,
+                            name = ~Antwort,
+                            hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+
+fig2 <- config(fig2,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig2 <- fig2 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.9,
+                                    x=1,
+                                    traceorder = "normal"
+                                    ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig2
+
+# Daten-Download Partei
+opppar <- data.frame(Gruppe = opposition$Gruppe,
+                     Auspraegung = opposition$Antwort,
+                     Anteil = round(opposition$werte, 0),
+                     KI_unten = round(opposition$KIunten, 0),
+                     KI_oben = round(opposition$KIoben, 0))
+opppar <- opppar[opppar$Gruppe %in% c("FBP", "VU", "FL", "DU", "DpL"),]
+
+opppar %>% 
+  download_this(output_name = "Opposition_Partei",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Erwartungsgemäss ist der Wunsch nach einer starken Opposition bei den kleineren, nicht in der Regierung vertretenen Parteien - allen voran DU und DpL - stärker ausgeprägt als bei den Wählenden der beiden Grossparteien. Aber auch FBP- und VU-Wählende halten es klar mehrheitlich für sehr oder eher wichtig, dass es eine starke parlamentarische Opposition gibt.  
+\
+\
+
+## Geschlecht
+
+```{r starke Opposition Geschlecht, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=2.2}
+# Datensatz einlesen:
+opposition <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Opposition_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+opposition$beschriftung  <- paste("[KI: ", 
+                                  round(opposition$KIunten),
+                                  "% - ",
+                                  round(opposition$KIoben),
+                                  "%]", 
+                                  sep="")
+
+
+# Farben
+opposition$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 3: Geschlecht
+daten <- opposition[opposition$Gruppe %in% c("Männer", "Frauen"),]
+daten$Gruppe <- factor(daten$Gruppe, levels=c(as.character(unique(daten$Gruppe))))
+
+fig3 <- plot_ly()
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig3 <- fig3 %>% add_bars(data = dat,
+                            x = ~werte,
+                            y = ~Gruppe, 
+                            text = ~beschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            marker = list(color = dat$farben), 
+                            visible = TRUE,
+                            legendgroup = ~Antwort,
+                            name = ~Antwort,
+                            hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+
+fig3 <- config(fig3,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig3 <- fig3 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.9,
+                                    x=1,
+                                    traceorder = "normal"
+                                    ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig3
+
+# Daten-Download Geschlecht
+oppges <- data.frame(Gruppe = opposition$Gruppe,
+                     Auspraegung = opposition$Antwort,
+                     Anteil = round(opposition$werte, 0),
+                     KI_unten = round(opposition$KIunten, 0),
+                     KI_oben = round(opposition$KIoben, 0))
+oppges <- oppges[oppges$Gruppe %in% c("Männer", "Frauen"),]
+
+oppges %>% 
+  download_this(output_name = "Opposition_Geschlecht",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Für beide Geschlechter ist eine starke parlamentarische Opposition sehr oder eher wichtig. Männer erachten sie jedoch signifikant häufiger als sehr wichtig als Frauen. 
+\
+\
+
+## Alter
+
+```{r starke Opposition Alter, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3.2}
+# Datensatz einlesen:
+opposition <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Opposition_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+opposition$beschriftung  <- paste("[KI: ", 
+                                  round(opposition$KIunten),
+                                  "% - ",
+                                  round(opposition$KIoben),
+                                  "%]", 
+                                  sep="")
+
+# Farben
+opposition$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 4: Alter
+daten <- opposition[opposition$Gruppe %in% c("65+ Jährige", "50-64 Jährige", "35-49 Jährige", "18-34 Jährige"),]
+daten$Gruppe <- factor(daten$Gruppe, levels=c(as.character(unique(daten$Gruppe))))
+
+fig4 <- plot_ly()
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig4 <- fig4 %>% add_bars(data = dat,
+                            x = ~werte,
+                            y = ~Gruppe, 
+                            text = ~beschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            marker = list(color = dat$farben), 
+                            visible = TRUE,
+                            legendgroup = ~Antwort,
+                            name = ~Antwort,
+                            hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+
+fig4 <- config(fig4,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig4 <- fig4 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.9,
+                                    x=1,
+                                    traceorder = "normal"
+                                    ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig4
+
+# Daten-Download Alter
+oppalt <- data.frame(Gruppe = opposition$Gruppe,
+                     Auspraegung = opposition$Antwort,
+                     Anteil = round(opposition$werte, 0),
+                     KI_unten = round(opposition$KIunten, 0),
+                     KI_oben = round(opposition$KIoben, 0))
+oppalt <- oppalt[oppalt$Gruppe %in% c("65+ Jährige", "50-64 Jährige",
+                                      "35-49 Jährige", "18-34 Jährige"),]
+
+oppalt %>% 
+  download_this(output_name = "Opposition_Alter",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Mit zunehmendem Alter steigt die wahrgenommene Bedeutung einer starken parlamentarischen Opposition. Rund vier von fünf Wählenden über 65 Jahren erachten sie als sehr oder eher wichtig. Doch auch in der jüngsten Altersgruppe spricht sich eine klare Mehrheit für eine starke Opposition aus. 
+\
+\
+
+# Politikverdrossenheit  {.tabset}
+
+In der Wahlumfrage 2021 wurde die Meinung zu der Aussage **"Egal, wie die Wahlen ausgehen, Regierung und Landtag machen eh, was sie wollen"** erhoben.  
+\
+
+## Total
+
+```{r Verdrossenheit Total, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=2}
+# Datensatz einlesen:
+verdruss <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Verdrossenheit_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+verdruss$beschriftung  <- paste("[KI: ", 
+                                  round(verdruss$KIunten),
+                                  "% - ",
+                                  round(verdruss$KIoben),
+                                  "%]", 
+                                  sep="")
+
+# Reihenfolge
+verdruss$Gruppe <- factor(verdruss$Gruppe, 
+                          levels=c(as.character(unique(verdruss$Gruppe))))
+
+# Farben
+verdruss$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 1: Total
+fig <- plot_ly()
+daten <- verdruss[verdruss$Gruppe == "Total",]
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig <- fig %>% add_bars(data = dat,
+                          x = ~werte,
+                          y = ~Gruppe, 
+                          text = ~beschriftung,
+                          textposition = "none",
+                          orientation = "h",
+                          marker = list(color = dat$farben), 
+                          visible = TRUE,
+                          legendgroup = ~Antwort,
+                          name = ~Antwort,
+                          hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+fig <- config(fig,
+              displaylogo=FALSE, 
+              locale="de",
+              scrollZoom=FALSE,
+              displayModeBar = TRUE,
+              modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig <- fig %>% layout(barmode="stack",
+                      xaxis=list(title="Anteil (%)"),
+                      yaxis=list(title=""),
+                      legend=list(orientation = "v",
+                                  y=0.9,
+                                  x=1,
+                                  traceorder = "normal"
+                                  ),
+                      plot_bgcolor='#f5f5f5'
+                      )
+fig
+
+# Daten-Download Total
+verdtot <- data.frame(Gruppe = verdruss$Gruppe,
+                      Auspraegung = verdruss$Antwort,
+                      Anteil = round(verdruss$werte, 0),
+                      KI_unten = round(verdruss$KIunten, 0),
+                      KI_oben = round(verdruss$KIoben, 0))
+verdtot <- verdtot[verdtot$Gruppe == "Total",]
+
+verdtot %>% 
+  download_this(output_name = "Politikverdrossenheit_Total",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Haltung, wonach Regierung und Landtag unabhängig vom Wahlergebnis ohnehin tun würden, was sie wollen, ist durchaus verbreitet. Etwa vier von zehn Wählenden pflichteten dieser Aussage voll und ganz oder zumindest eher zu. Dies darf aber nicht darüber hinwegtäuschen, dass die Mehrheit der Wählenden dieser Aussage eher oder überhaupt nicht zustimmt.  
+Grundsätzlich ist jedoch zu beachten, dass wohl einige politikverdrossene Wahlberechtigte gar nicht erst an den Wahlen, geschweige denn an der Wahlumfrage, teilgenommen haben. Denn wer sich von den Wahlen keine Änderungen oder Wirkungen verspricht, hat kaum eine Anreiz teilzunehmen.  
+Eine [Wahlumfrage des Forschungsinstituts Sotomo](https://sotomo.ch/site/wp-content/uploads/2020/12/SRG-SSR-Wahltagsbefragung-Bericht.pdf) nach den Eidgenössischen Wahlen 2019 zeigt für die Schweiz übrigens ähnliche Werte wie in Liechtenstein 2021. 48 Prozent der Wählenden bejahten die Aussage, wonach Bundesrat und Parlament eh machen würden, was sie wollen. 
+\
+\
+
+## Partei
+
+```{r Verdrossenheit Partei, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3.3}
+# Datensatz einlesen:
+verdruss <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Verdrossenheit_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+verdruss$beschriftung  <- paste("[KI: ", 
+                                  round(verdruss$KIunten),
+                                  "% - ",
+                                  round(verdruss$KIoben),
+                                  "%]", 
+                                  sep="")
+
+# Farben
+verdruss$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 2: Partei
+daten <- verdruss[verdruss$Gruppe %in% c("DpL", "DU", "FL", "VU", "FBP"),]
+daten$Gruppe <- factor(daten$Gruppe, levels=c(as.character(unique(daten$Gruppe))))
+
+fig2 <- plot_ly()
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig2 <- fig2 %>% add_bars(data = dat,
+                            x = ~werte,
+                            y = ~Gruppe, 
+                            text = ~beschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            marker = list(color = dat$farben), 
+                            visible = TRUE,
+                            legendgroup = ~Antwort,
+                            name = ~Antwort,
+                            hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+
+fig2 <- config(fig2,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig2 <- fig2 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.9,
+                                    x=1,
+                                    traceorder = "normal"
+                                    ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig2
+
+# Daten-Download Partei
+verdpar <- data.frame(Gruppe = verdruss$Gruppe,
+                      Auspraegung = verdruss$Antwort,
+                      Anteil = round(verdruss$werte, 0),
+                      KI_unten = round(verdruss$KIunten, 0),
+                      KI_oben = round(verdruss$KIoben, 0))
+verdpar <- verdpar[verdpar$Gruppe %in% c("FBP", "VU", "FL", "DU", "DpL"),]
+
+verdpar %>% 
+  download_this(output_name = "Politikverdrossenheit_Partei",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Besonders kritisch sind die Wählerschaften der DU und der DpL. Eine klare Mehrheit beider Parteien ist der Ansicht, Regierung und Parlament würden sich in ihrem Handeln kaum an den Präferenzen des Wahlvolks ausrichten. Ihnen steht die Oppositionspartei FL gegenüber, deren Wählerschaft am stärksten von der Responsivität der Regierung und des Landtags überzeugt ist. 
+\
+\
+
+## Geschlecht
+
+```{r Verdrossenheit Geschlecht, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=2.2}
+# Datensatz einlesen:
+verdruss <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Verdrossenheit_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+verdruss$beschriftung  <- paste("[KI: ", 
+                                  round(verdruss$KIunten),
+                                  "% - ",
+                                  round(verdruss$KIoben),
+                                  "%]", 
+                                  sep="")
+
+# Farben
+verdruss$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 3: Geschlecht
+daten <- verdruss[verdruss$Gruppe %in% c("Männer", "Frauen"),]
+daten$Gruppe <- factor(daten$Gruppe, levels=c(as.character(unique(daten$Gruppe))))
+
+fig3 <- plot_ly()
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig3 <- fig3 %>% add_bars(data = dat,
+                            x = ~werte,
+                            y = ~Gruppe, 
+                            text = ~beschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            marker = list(color = dat$farben), 
+                            visible = TRUE,
+                            legendgroup = ~Antwort,
+                            name = ~Antwort,
+                            hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+
+fig3 <- config(fig3,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig3 <- fig3 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.9,
+                                    x=1,
+                                    traceorder = "normal"
+                                    ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig3
+
+# Daten-Download Geschlecht
+verdges <- data.frame(Gruppe = verdruss$Gruppe,
+                      Auspraegung = verdruss$Antwort,
+                      Anteil = round(verdruss$werte, 0),
+                      KI_unten = round(verdruss$KIunten, 0),
+                      KI_oben = round(verdruss$KIoben, 0))
+verdges <- verdges[verdges$Gruppe %in% c("Männer", "Frauen"),]
+
+verdges %>% 
+  download_this(output_name = "Politikverdrossenheit_Geschlecht",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Zwischen den Geschlechtern gibt es kaum Unterschiede. Frauen haben die Frage nach der Responsivität von Parlament und Regierung etwas häufiger nicht beantwortet ("Weiss nicht"), während Männer der Aussage häufiger überhaupt nicht zustimmten. 
+\
+\
+
+## Alter
+
+```{r Verdrossenheit Alter, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8.7, fig.height=3.1}
+# Datensatz einlesen:
+verdruss <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Verdrossenheit_Umfrage.csv",
+                       header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Beschriftung Konfidenzintervall
+verdruss$beschriftung  <- paste("[KI: ", 
+                                  round(verdruss$KIunten),
+                                  "% - ",
+                                  round(verdruss$KIoben),
+                                  "%]", 
+                                  sep="")
+
+# Farben
+verdruss$farben = rep(c("#00B050FF", "#93DFB8", "grey", "#FF9980", "red"), times=12)
+
+# Plot 4: Alter
+daten <- verdruss[verdruss$Gruppe %in% c("65+ Jährige", "50-64 Jährige", "35-49 Jährige", "18-34 Jährige"),]
+daten$Gruppe <- factor(daten$Gruppe, levels=c(as.character(unique(daten$Gruppe))))
+
+fig4 <- plot_ly()
+for(i in unique(daten$Antwort)){
+  dat <- daten[daten$Antwort == i,]
+  fig4 <- fig4 %>% add_bars(data = dat,
+                            x = ~werte,
+                            y = ~Gruppe, 
+                            text = ~beschriftung,
+                            textposition = "none",
+                            orientation = "h",
+                            marker = list(color = dat$farben), 
+                            visible = TRUE,
+                            legendgroup = ~Antwort,
+                            name = ~Antwort,
+                            hovertemplate=paste("%{x:.0f}%", "<br>", dat$beschriftung, sep="")
+  )
+}
+
+fig4 <- config(fig4,
+               displaylogo=FALSE, 
+               locale="de",
+               scrollZoom=FALSE,
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove=c("select2d", "lasso2d")
+)
+
+fig4 <- fig4 %>% layout(barmode="stack",
+                        xaxis=list(title="Anteil (%)"),
+                        yaxis=list(title=""),
+                        legend=list(orientation = "v",
+                                    y=0.9,
+                                    x=1,
+                                    traceorder = "normal"
+                                    ),
+                        plot_bgcolor='#f5f5f5'
+)
+fig4
+
+# Daten-Download Alter
+verdalt <- data.frame(Gruppe = verdruss$Gruppe,
+                      Auspraegung = verdruss$Antwort,
+                      Anteil = round(verdruss$werte, 0),
+                      KI_unten = round(verdruss$KIunten, 0),
+                      KI_oben = round(verdruss$KIoben, 0))
+verdalt <- verdalt[verdalt$Gruppe %in% c("65+ Jährige", "50-64 Jährige",
+                                      "35-49 Jährige", "18-34 Jährige"),]
+
+verdalt %>% 
+  download_this(output_name = "Politikverdrossenheit_Alter",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: [Wahlumfragen Liechtenstein-Institut](https://www.liechtenstein-institut.li/forschungsprojekte/abstimmungen-und-wahlen-liechtenstein#forschungsprojekt)  *
+\
+\
+Die Unterschiede zwischen den Altersgruppen sind insgesamt eher gering. Am häufigsten zweifelten Wählende zwischen 50 und 64 Jahren die Responsivität von Regierung und Parlament an, am seltensten die 18- bis 34-Jährigen. 
+\
+\
+
+
+# Methodische Anmerkungen zur Umfrage {#methode}
+
+Bei der Umfrage zu den Landtagswahlen 2021 handelte es sich um eine offene Onlineumfrage. Insgesamt flossen die Antworten von 1984 wahlberechtigten Liechtensteinerinnen und Liechtensteiner ein, die an den Wahlen teilgenommen haben. Die Daten wurden nach Alter, Geschlecht und Wahlentscheid gewichtet. Trotzdem bleibt eine Umfrage immer eine Momentaufnahme, die vom jeweiligen gesellschaftlichen, politischen,  wirtschaftlichen und persönlichen Kontext beeinflusst ist. 
+
+Grundsätzlich sind Umfragen immer mit einer gewissen statistischen Unsicherheit behaftet, schliesslich können kaum je alle Wählerinnen und Wähler - in der Statistik spricht man von der "Grundgesamtheit" - befragt werden. Stattdessen bedient man sich einer Teilmenge aller Stimmberechtigter ("Stichprobe"), aus der man die interessierenden Parameter wie Anteilswerte oder Mittelwerte berechnet. Dabei bleibt der wahre Wert der Grundgesamtheit zwar unbekannt, aber mit statistischen Schätzverfahren ist es möglich, einen Wertebereich (**"Konfidenz- oder Vertrauensintervall"**) zu eruieren, der den wahren Wert mit einer gewissen Wahrscheinlichkeit enthält. In den auf dieser Seite aufgeführten Grafiken werden jeweils die 90%igen Vertrauensintervalle ausgewiesen. Diese werden eingeblendet, wenn man die Maus über die Grafiken bewegt (Abkürzung "KI"). Ein 90%-Konfidenzintervall gibt den Wertebereich an, der den wahren Wert der Grundgesamtheit mit einer Wahrscheinlichkeit von 90% enthält.
+
+\
+

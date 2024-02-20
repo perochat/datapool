@@ -1,0 +1,343 @@
+---
+title: "&#32;"
+#author: "Philippe"
+#date: "2022-12-06"
+output:
+  html_document
+    #:
+    #toc: true
+    #toc_depth: 2
+    #toc_float: true
+  #toc: default
+  #toc-title: "Inhalt"
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE, echo=FALSE}
+library(plotly)
+library(reactable)
+library(downloadthis)
+```
+
+
+```{r Datum, echo=FALSE, warning=FALSE}
+current_date <- Sys.Date()
+current_date <- format(current_date, "%d.%m.%Y")
+```
+
+\
+*Stand `r current_date`*
+\
+\
+
+Der Liechtensteiner Landtag gehört zu den kleinsten nationalen Parlamenten der Welt. Gemäss der [Inter-Parliamentary Union (IPU)](https://www.ipu.org/) haben von 193 Staaten nur deren elf ein noch kleineres nationales Parlament als Liechtenstein  (Stand 26.04.2023). Dabei handelt es sich um zehn kleine Inselstaaten sowie das Fürstentum Monaco, das 24 Parlamentsmitglieder hat.  
+
+Die folgenden Grafiken geben Auskunft über die Anzahl Sitze pro Partei sowie die Stärke der verschiedenen Parteien. 
+
+\
+\
+
+
+## Mandate
+
+```{r Mandate, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4.5}
+# Daten einlesen
+mandate<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Mandate.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Auswahl für Traces:
+auswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Mandate_Auswahl.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Plot
+fig<-plot_ly()
+for (i in 1:length(auswahl$Ebene)){
+  dat <- mandate[mandate$Ebene==auswahl$Ebene[i],]
+  dat <- dat[,c("breite", "xachse", auswahl$Variable[i])]
+  names(dat) <- c("breite", "xachse", "anzahl")
+  fig<-fig %>% add_bars(data=dat,
+                        x=~xachse,
+                        y=~anzahl, width=~breite, 
+                        marker=list(color=c(auswahl$Farbe[i])), 
+                        name=auswahl$TraceName[i],
+                        visible=auswahl$sichtbar[i],
+                        hovertemplate=c(auswahl$Hovertmp[i]))
+}
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d"))
+fig<-fig %>% layout(barmode="stack",
+                    xaxis=list(
+                      tickvals=mandate$xachse,
+                      ticktext=mandate$Datum,
+                      title=""
+                    ),
+                    yaxis=list(
+                      title="Anzahl Mandate",
+                      range=c(0,25)
+                    ),
+                    hovermode="x unified",
+                    legend=list(
+                      #title=list(text="<b>Partei:</b>"),
+                                y=0.7),
+                    plot_bgcolor='#f5f5f5',
+                    updatemenus = list(
+                      list(
+                        y=0.9,
+                        x=1.35,
+                        xanchor="right",
+                        buttons = list(
+                          list(method = "update",
+                               args = list(list(visible = list(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE)),
+                                           list(yaxis=list(range=c(0,25), 
+                                                           title="Anzahl Mandate"))),
+                               label = "Parteien (absolut)"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,
+                                                               FALSE, FALSE, FALSE, FALSE)),
+                                           list(yaxis=list(range=c(0,100), 
+                                                           title="Anteil Mandate (in %)"))),
+                               label = "Parteien (prozentual)"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               TRUE, TRUE, FALSE, FALSE)),
+                                           list(yaxis=list(range=c(0,25), 
+                                                           title="Anzahl Mandate"))),
+                               label = "Geschlecht (absolut)"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                                                               FALSE, FALSE, TRUE, TRUE)),
+                                           list(yaxis=list(range=c(0,100), 
+                                                           title="Anteil Mandate (in %)"))),
+                               label = "Geschlecht (prozentual)"),
+                          list(method = "update",
+                               args = list(list(visible=list(FALSE, TRUE, TRUE, FALSE, FALSE, FALSE,
+                                                             FALSE, TRUE, TRUE, FALSE, FALSE, FALSE,
+                                                             FALSE, TRUE, TRUE, FALSE, FALSE, FALSE,
+                                                             FALSE, TRUE, TRUE, FALSE, FALSE, FALSE,
+                                                             FALSE, TRUE, TRUE, FALSE, FALSE, FALSE,
+                                                             FALSE, FALSE, FALSE, FALSE)),
+                                           list(yaxis=list(range=c(0,25), 
+                                                           title="Anzahl Mandate"))),
+                               label = "Parteien und Wahlkreise"),
+                          list(method = "update",
+                               args = list(list(visible=list(FALSE, FALSE, FALSE, TRUE, TRUE, FALSE,
+                                                             FALSE, FALSE, FALSE, TRUE, TRUE, FALSE,
+                                                             FALSE, FALSE, FALSE, TRUE, TRUE, FALSE,
+                                                             FALSE, FALSE, FALSE, TRUE, TRUE, FALSE,
+                                                             FALSE, FALSE, FALSE, TRUE, TRUE, FALSE,
+                                                             FALSE, FALSE, FALSE, FALSE)),
+                                           list(yaxis=list(range=c(0,25), 
+                                                           title="Anzahl Mandate"))),
+                               label = "Parteien und Geschlecht"))
+                      )
+                    )
+)
+fig
+
+```
+*Datenquelle: Amtliche Wahlergebnisse  *
+\
+\
+
+Bis 1993 waren jeweils nur zwei Parteien in Landtag vertreten. Ab 1993 schafften drei und seit 2013 jeweils vier Parteien den Einzug ins Parlament. Zusätzlich zu den ordentlichen Abgeordneten gibt es im Landtag stellvertretende Abgeordnete. Die Anzahl stellvertretende Abgeordnete hängt von der Stärke der im Landtag vertretenen Parteien ab und kann sich somit nach jeder Wahl verändern.   
+
+In der Abbildung ist die Mandatsverteilung seit 1945 dargestellt. Die Daten beziehen sich jeweils auf den Tag der Wahl. Rücktritte, Parteiwechsel und -austritte werden nicht berücksichtigt. 
+\
+\
+\
+
+## Parteistärken
+
+
+```{r Parteistärke, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=7.5}
+# Daten einlesen:
+stark<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Waehlerstaerke.csv",
+                header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Variablenname ändern:
+names(stark)[1]<-"Datum"
+
+# Datum definieren:
+stark$Datum<-as.Date(stark$Datum, format="%d.%m.%Y")
+
+# Reihenfolge Parteien:
+stark$Partei <- factor(stark$Partei, levels = c("FBP", "VU", "FL", "DU", "DpL", "CSP", "ÜLL"))
+
+# Parteifarben (für CSP selber "erfunden", da ich keine Vorlage habe)
+farben<-c("FBP" = "#4D4E50", "VU" = "#cc0033", "FL" = "#bbbbbb", "DU" = "#ffcc00", 
+          "DpL" = "#005fab", "CSP" = "#00B050", "ÜLL" = "#9d358b")
+
+# Plot 1: Liechtenstein
+fig1<-plot_ly(stark[stark$Partei %in% c("FBP", "VU", "FL", "DU", "DpL"),],
+              x=~Datum, 
+              y=~Liechtenstein,
+              color=~Partei,
+              colors=farben,
+              showlegend=TRUE,
+              type="scatter",
+              mode="lines+markers",
+              legendgroup=~Partei,
+              hovertemplate=paste("%{y:.1f}", "%", sep="")) %>%
+  layout(yaxis=list(range=c(0, 65),
+                    title="Parteistärke (%)"),
+         xaxis=list(
+           type="date",
+           range=c(as.Date("1973-10-01"), as.Date("2022-01-01")),
+           title="",
+           tickvals=stark$Datum,
+           ticktext=stark$Datum))
+
+fig1 <- fig1 %>% add_trace(stark,
+                           data=stark[stark$Partei %in% c("CSP", "ÜLL"),],
+                           color=~Partei,
+                           colors=farben,
+                           visible="legendonly",
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+
+# Plot 2: Oberland
+fig2<-plot_ly(stark[stark$Partei %in% c("FBP", "VU", "FL", "DU", "DpL"),],
+              x=~Datum, 
+              y=~Oberland,
+              color=~Partei,
+              colors=farben,
+              showlegend=FALSE,
+              type="scatter",
+              mode="lines+markers",
+              legendgroup=~Partei,
+              hovertemplate=paste("%{y:.1f}", "%", sep="")) %>%
+  layout(yaxis=list(range=c(0, 65),
+                    title="Parteistärke (%)"),
+         xaxis=list(
+           type="date",
+           range=c(as.Date("1973-10-01"), as.Date("2022-01-01")),
+           title="",
+           tickvals=stark$Datum,
+           ticktext=stark$Datum))
+
+fig2 <- fig2 %>% add_trace(stark,
+                           data=stark[stark$Partei %in% c("CSP", "ÜLL"),],
+                           color=~Partei,
+                           colors=farben,
+                           visible="legendonly",
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+
+# Plot 3: Unterland
+fig3<-plot_ly(stark[stark$Partei %in% c("FBP", "VU", "FL", "DU", "DpL"),],
+              x=~Datum, 
+              y=~Unterland,
+              color=~Partei,
+              colors=farben,
+              showlegend=FALSE,
+              type="scatter",
+              mode="lines+markers",
+              legendgroup=~Partei,
+              hovertemplate=paste("%{y:.1f}", "%", sep="")) %>%
+  layout(yaxis=list(range=c(0, 65),
+                    title="Parteistärke (%)"),
+         xaxis=list(
+           type="date",
+           range=c(as.Date("1973-10-01"), as.Date("2022-01-01")),
+           title="Datum",
+           tickvals=stark$Datum,
+           ticktext=stark$Datum))
+
+fig3 <- fig3 %>% add_trace(stark,
+                           data=stark[stark$Partei %in% c("CSP", "ÜLL"),],
+                           color=~Partei,
+                           colors=farben,
+                           visible="legendonly",
+                           hovertemplate=paste("%{y:.1f}", "%", sep=""))
+
+
+# Alle drei Plots zusammen:
+fig <- subplot(fig1, fig2, fig3, nrows=3, shareX = TRUE, titleY=TRUE)
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(title=list(text="<b>Partei:</b>"),
+                y=0.8),
+    plot_bgcolor='#f5f5f5',
+    annotations = list(
+      list(x=0.5,
+           y=1.011,
+           text="Liechtenstein",
+           showarrow = FALSE,
+           xref="paper",
+           yref="paper",
+           font=list(size=20)),
+      list(x=0.5,
+           y=0.637,
+           text="Oberland",
+           showarrow = FALSE,
+           xref="paper",
+           yref="paper",
+           font=list(size=20)),
+      list(x=0.5,
+           y=0.28,
+           text="Unterland",
+           showarrow = FALSE,
+           xref="paper",
+           yref="paper",
+           font=list(size=20))
+    )
+  )
+fig
+
+# Daten-Download
+starkdown <- data.frame(Datum = stark$Datum,
+                        Partei = stark$Partei,
+                        Liechtenstein = round(stark$Liechtenstein, 1),
+                        Oberland = round(stark$Oberland, 1),
+                        Unterland = round(stark$Unterland, 1))
+
+starkdown %>% 
+  download_this(output_name = "Parteistaerke",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *
+\
+\
+Bei der Berechnung der Parteistärke ist die unterschiedliche Grösse der beiden Wahlkreise zu berücksichtigen. Im Oberland sind 15 und im Unterland 10 Sitze zu vergeben. Dementsprechend hat eine Wählerin/ein Wähler im Oberland 15 Stimmen zu vergeben, im Unterland hingegen nur deren 10. Wird dieser Aspekt bei der Berechnung der Parteistärke nicht berücksichtigt und die einfache Summe der Parteistimmen aus beiden Wahlkreisen gebildet, sind Wählende aus dem Oberland folglich über- und Wählende aus dem Unterland untergewichtet.
+
+Aufgrund dessen beruht die folgende Darstellung der Parteistärke auf den *effektiven Parteistimmen*. Diese berechnen sich, indem die Stimmen der Parteien durch die Anzahl der im jeweiligen Wahlkreis zu vergebenden Mandate geteilt werden. Die *effektive Parteistärke* einer Partei ergibt sich somit aus der Summe der effektiven Stimmen der jeweiligen Partei aus den beiden Wahlkreisen dividiert durch die Summe der effektiven Stimmen aller Parteien in beiden Wahlkreisen. Derselben Logik folgend werden in der Schweiz beispielsweise sogenannte "fiktive Wählende" berechnet. In den amtlichen Kundmachungen zu den Landtagswahlen wird demgegenüber jeweils die einfache Summe der Parteistimmen ausgewiesen.  
+\
+\
+\
+
+

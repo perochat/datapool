@@ -1,0 +1,1146 @@
+---
+title: "&#32;"
+#author: "Philippe"
+#date: "2022-12-06"
+output:
+  html_document
+    #:
+    #toc: true
+    #toc_depth: 2
+    #toc_float: true
+  #toc: default
+  #toc-title: "Inhalt"
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE, echo=FALSE}
+library(plotly)
+library(reactable)
+library(downloadthis)
+```
+
+
+```{r Datum, echo=FALSE, warning=FALSE}
+current_date <- Sys.Date()
+current_date <- format(current_date, "%d.%m.%Y")
+```
+
+\
+*Stand `r current_date`*
+\
+\
+
+Die Landtagsabgeordneten werden alle vier Jahre nach dem Verhältniswahlrecht gewählt. Zu vorgezogenen Landtagswahlen kann es kommen, wenn der Fürst den Landtag auflöst, wenn der Landtag durch Unterschreiten des Anwesenheitsquorums nicht mehr handlungsfähig ist oder wenn in einer Volksabstimmung die Auflösung des Landtags beschlossen wird. Letztmals ist es 1993 zu einer vorgezogenen Landtagswahl gekommen, nachdem der Fürst den Landtag aufgelöst hatte.  
+
+\
+\
+
+
+# Kandidierende {.tabset}
+
+## Kandidaturen
+
+```{r Kandidaturen, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4.5}
+# Daten einlesen
+kandidierende<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Kandidierende.csv",
+                        header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Auswahl für Traces:
+auswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Kandidierende_Auswahl.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Plot
+fig<-plot_ly(kandidierende, x=~xachse)
+for (i in 1:length(auswahl$Partei)){
+  fig<-fig %>% add_bars(data=kandidierende[kandidierende$Wahlkreis==auswahl$Wahlkreis[i] & 
+                                             kandidierende$Partei==auswahl$Partei[i] & 
+                                             kandidierende$Geschlecht==auswahl$Geschlecht[i] & 
+                                             kandidierende$Bisherige==auswahl$Bisherige[i],],
+                        y=~Kandidierende,
+                        width=~breite,
+                        marker=list(color=auswahl$farbe[i]), name=auswahl$beschriftung[i],
+                        visible=auswahl$sichtbar[i])
+}
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d"))
+fig<-fig %>% layout(barmode="stack",
+                    xaxis=list(
+                      tickvals=kandidierende$xachse,
+                      ticktext=kandidierende$Datum,
+                      title=""
+                    ),
+                    yaxis=list(
+                      title="Anzahl Kandidierende",
+                      range=c(0,80)
+                    ),
+                    hovermode="x unified",
+                    legend=list(title=list(text="<b>Kandidierende:</b>"),
+                                y=0.7),
+                    plot_bgcolor='#f5f5f5',
+                    updatemenus = list(
+                      list(
+                        y=0.9,
+                        x=1.35,
+                        xanchor="right",
+                        buttons = list(
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE,
+                                                               TRUE, TRUE,  
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE))),
+                               label = "Geschlecht"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE,
+                                                               FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               TRUE, TRUE,
+                                                               FALSE, FALSE, FALSE, FALSE))),
+                               label = "Wahlkreis"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE,
+                                                               FALSE, FALSE, 
+                                                               TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE))),
+                               label = "Partei"),
+                          list(method = "update",
+                               args = list(list(visible = list(TRUE, TRUE,
+                                                               FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE))),
+                               label = "Bisherige"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE,
+                                                               FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE))),
+                               label = "Partei und Geschlecht"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE,
+                                                               FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                                               FALSE, FALSE,
+                                                               FALSE, FALSE, FALSE, FALSE))),
+                               label = "Partei und Wahlkreis"),
+                          list(method = "update",
+                               args = list(list(visible = list(FALSE, FALSE,
+                                                               FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                                               FALSE, FALSE,
+                                                               TRUE, TRUE, TRUE, TRUE))),
+                               label = "Wahlkreis und Geschlecht")
+                        )
+                      )
+                    )
+)
+fig
+
+```
+*Datenquelle: Amtliche Wahlergebnisse *
+\
+\
+Seit 1945 haben jeweils zwischen 30 und 75 Personen zur Wahl in den Landtag kandidiert. Pro Sitz gab es sowohl im Unter- wie auch im Oberland jeweils mindestens zwei Kandidaturen. Bei den Landtagswahlen 2021 traten erstmals fünf Parteien an. 
+
+Grundsätzlich ist bei dieser Darstellung die schrittweise Senkung des Wahlrechtsalters sowie die Einführung des Frauenstimm- und -wahlrecht im Jahre 1984 zu berücksichtigen (siehe [Einleitung](#einleitung)). 
+\
+\
+\
+
+## Kandidaturen pro Sitz
+
+```{r Kandidaturen pro Sitz, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4.5}
+# Daten einlesen:
+kandsitz <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Kandidierende_pro_Sitz.csv",
+                     header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Datum definieren:
+kandsitz$Datum <- as.Date(kandsitz$Datum, format="%d.%m.%Y")
+
+# Reihenfolge Staatsebenen:
+kandsitz$Wahlkreis <- factor(kandsitz$Wahlkreis, levels = c("Liechtenstein", "Oberland", "Unterland"))
+
+# Plot
+fig <- plot_ly(kandsitz,
+                 x=~Datum,
+                 y=~KandProSitz,
+                 color=~Wahlkreis,
+                 colors=c("#440154FF", "#21908CFF", "#8FD744FF"),
+                 showlegend=TRUE,
+                 type="scatter",
+                 mode="lines+markers",
+                 hovertemplate=paste("%{y:.1f}", " Kandidaturen", sep=""))
+
+fig <-config(fig,
+                displaylogo=FALSE, 
+                locale="de",
+                scrollZoom=FALSE,
+                displayModeBar = TRUE,
+                modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    yaxis=list(range=c(0, 4),
+               title="Kandidaturen pro Sitz"),
+    xaxis=list(
+      type="date",
+      range=c(as.Date("1986-01-01"), as.Date("2022-01-01")),
+      title="Datum",
+      tickvals=kandsitz$Datum,
+      ticktext=kandsitz$Datum,
+      rangeslider = list(type="date",
+                         range=c(as.Date("1944-11-01"), as.Date("2022-01-01")))
+    ),
+    hovermode="x",
+    legend=list(title=list(text="<b>Ebene:</b>"),
+                y=0.8),
+    plot_bgcolor='#f5f5f5'
+  ) 
+fig
+
+```
+*Datenquelle: Eigene Berechungen auf Basis der amtlichen Wahlergebnisse *
+\
+\
+Seit 1945 haben jeweils zwischen 30 und 75 Personen zur Wahl in den Landtag kandidiert. Pro Sitz gab es sowohl im Unter- wie auch im Oberland jeweils mindestens zwei Kandidaturen. Bei den Landtagswahlen 2021 traten erstmals fünf Parteien an. 
+
+Grundsätzlich ist bei dieser Darstellung die schrittweise Senkung des Wahlrechtsalters sowie die Einführung des Frauenstimm- und -wahlrecht im Jahre 1984 zu berücksichtigen (siehe [Einleitung](#einleitung)). 
+\
+\
+\
+
+## Kandidaturen pro 1'000 Stimmberechtigte
+
+```{r Kandidaturen pro 1000 Stber, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4.5}
+# Daten einlesen:
+kandstber <- read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Kandidierende_pro_Stber.csv",
+                     header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Datum definieren:
+kandstber$Datum <- as.Date(kandstber$Datum, format="%d.%m.%Y")
+
+# Reihenfolge Staatsebenen:
+kandstber$Wahlkreis <- factor(kandstber$Wahlkreis, levels = c("Liechtenstein", "Oberland", "Unterland"))
+
+# Plot
+fig <- plot_ly(kandstber,
+                 x=~Datum,
+                 y=~KandPro1000Stber,
+                 color=~Wahlkreis,
+                 colors=c("#440154FF", "#21908CFF", "#8FD744FF"),
+                 showlegend=TRUE,
+                 type="scatter",
+                 mode="lines+markers",
+                 hovertemplate=paste("%{y:.1f}", " Kandidaturen", sep=""))
+
+fig <-config(fig,
+                displaylogo=FALSE, 
+                locale="de",
+                scrollZoom=FALSE,
+                displayModeBar = TRUE,
+                modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    yaxis=list(range=c(0, 14),
+               title="Kandidaturen pro\n1000 Stimmberechtigte"),
+    xaxis=list(
+      type="date",
+      range=c(as.Date("1986-01-01"), as.Date("2022-01-01")),
+      title="Datum",
+      tickvals=kandstber$Datum,
+      ticktext=kandstber$Datum,
+      rangeslider = list(type="date",
+                         range=c(as.Date("1944-11-01"), as.Date("2022-01-01")))
+    ),
+    hovermode="x",
+    legend=list(title=list(text="<b>Ebene:</b>"),
+                y=0.8),
+    plot_bgcolor='#f5f5f5'
+  ) 
+fig
+
+
+```
+*Datenquelle: Eigene Berechungen auf Basis der amtlichen Wahlergebnisse *
+\
+\
+Seit 1945 haben jeweils zwischen 30 und 75 Personen zur Wahl in den Landtag kandidiert. Pro Sitz gab es sowohl im Unter- wie auch im Oberland jeweils mindestens zwei Kandidaturen. Bei den Landtagswahlen 2021 traten erstmals fünf Parteien an. 
+
+Grundsätzlich ist bei dieser Darstellung die schrittweise Senkung des Wahlrechtsalters sowie die Einführung des Frauenstimm- und -wahlrecht im Jahre 1984 zu berücksichtigen (siehe [Einleitung](#einleitung)). 
+\
+\
+\
+
+# Wahlchance der Kandidierenden
+
+```{r Erfolgsquoten, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4.5}
+# Daten einlesen
+equote<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Erfolgsquote.csv",
+                 header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+equote$Beschriftung[equote$Geschlecht=="Mann"] <- "Männer"
+
+# Datum definieren:
+equote$Datum<-as.Date(equote$Datum, format="%d.%m.%Y")
+
+# Reihenfolge
+equote$Beschriftung <- factor(equote$Beschriftung, 
+                              levels = c("Frauen", "Männer", "Bisherige", "Neue", 
+                                         "FBP", "VU", "FL", "DU", "DpL", "UEK", "CSP", "UeLL"))
+
+# Auswahl für Traces
+auswahl<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Erfolgsquote_Auswahl.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(auswahl)[1] <- "beschr"
+
+# Plot
+fig <- plot_ly()
+for (i in 1:length(auswahl$beschr)){
+  fig <- fig %>% add_trace(data = equote[equote$Beschriftung==auswahl$beschr[i],], 
+                           x = ~Datum, 
+                           y = ~erfolgsquote,
+                           line=list(color=auswahl$farbe[i]),
+                           marker=list(color=auswahl$farbe[i]),
+                           name=auswahl$beschr[i],
+                           type="scatter", mode="lines+markers", 
+                           visible=auswahl$sichtbar[i],
+                           hovertemplate=paste("%{y:.1f}", "%", sep="")
+  )
+}
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    yaxis=list(range=c(0, 105),
+               title="Erfolgsquote (%)"),
+    xaxis=list(
+      type="date",
+      title="",
+      tickvals=equote$Datum,
+      ticktext=equote$Datum,
+      range=c(as.Date("1973-11-01"), as.Date("2021-12-31")),
+      rangeslider = list(type="date",
+                         range=c(as.Date("1944-10-01"), as.Date("2022-01-01")))
+      ),
+    hovermode="x unified",
+    legend=list(title=list(text="<b></b>"),
+                y=0.8),
+    plot_bgcolor='#f5f5f5',
+    updatemenus = list(
+      list(
+        y=0.9,
+        x=1.16,
+        xanchor="right",
+        buttons = list(
+          list(method = "update",
+               args = list(list(visible = list(TRUE, TRUE,  
+                                               FALSE, FALSE, 
+                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))),
+               label = "Geschlecht"),
+          list(method = "update",
+               args = list(list(visible = list(FALSE, FALSE,
+                                               TRUE, TRUE,  
+                                               FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))),
+               label = "Bisherige"),
+          list(method = "update",
+               args = list(list(visible = list(FALSE, FALSE,
+                                               FALSE, FALSE,  
+                                               TRUE, TRUE, TRUE, TRUE, TRUE, 
+                                               "legendonly", "legendonly", "legendonly"))),
+               label = "Partei")
+        )
+      )
+    )
+  )
+
+fig
+
+# Daten-Download
+edown <- data.frame(Datum = equote$Datum,
+                    Gruppe = equote$Beschriftung,
+                    Kandidierende = equote$Kandidierende,
+                    Gewaehlte = equote$Gew.e4.hlte,
+                    Wahlchance = round(equote$erfolgsquote, 1))
+
+edown %>% 
+  download_this(output_name = "Wahlchancen",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *
+\
+\
+Aus den Angaben der Kandidierenden und der Gewählten kann die Wahlchance nach Geschlecht, Bisherigenstatus und Parteimitgliedschaft ermittelt werden. Die Wahlchance entspricht dem Anteil der Gewählten in der jeweiligen Gruppe am Total der Kandidierenden dieser Gruppe. 
+\
+\
+\
+
+# Wahlbeteiligung
+
+```{r Beteiligung, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4}
+# Daten einlesen:
+ltteil<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Beteiligung.csv",
+                      header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Variablenname ändern:
+names(ltteil)[1]<-"Datum"
+
+# Datum definieren:
+ltteil$Datum<-as.Date(ltteil$Datum, format="%d.%m.%Y")
+
+# Reihenfolge Staatsebenen:
+ltteil$Ebene <- factor(ltteil$Ebene, levels = c("Liechtenstein", "Oberland", "Unterland"))
+
+# Plot
+teilfig<-plot_ly(ltteil,
+                 x=~Datum,
+                 y=~beteiligung,
+                 color=~Ebene,
+                 colors=c("#440154FF", "#21908CFF", "#8FD744FF"),
+                 showlegend=TRUE,
+                 type="scatter",
+                 mode="lines+markers",
+                 hovertemplate=paste("%{y:.1f}", "%", sep=""))
+
+teilfig<-config(teilfig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    yaxis=list(range=c(0, 100),
+               title="Teilnahme (%)"),
+    xaxis=list(
+      type="date",
+      range=c(as.Date("1973-11-01"), as.Date("2022-01-01")),
+      title="Datum",
+      tickvals=ltteil$Datum,
+      ticktext=ltteil$Datum,
+      rangeslider = list(type="date",
+                         range=c(as.Date("1944-11-01"), as.Date("2022-01-01")))
+      ),
+    hovermode="x",
+    legend=list(title=list(text="<b>Ebene:</b>"),
+                y=0.8),
+    plot_bgcolor='#f5f5f5'
+  ) 
+  
+
+teilfig
+```
+*Datenquelle: Regierungskanzlei, [Amt für Statistik - Statistisches Jahrbuch Liechtenstensteins](https://www.statistikportal.li/de/uebersichten-indikatoren/statistisches-jahrbuch)  *
+\
+\
+Im Laufe der Zeit hat die Wahlbeteiligung tendenziell abgenommen. Lag sie 1945 noch bei über 93 Prozent, betrug sie 2021 noch 78 Prozent. Im internationalen Vergleich ist die Beteiligung in Liechtenstein aber nach wie vor relativ hoch. Zum Vergleich: Die letzten Nationalratswahlen in Österreich von 2019 erreichten eine Beteiligung von knapp 76 Prozent (Quelle: [Bundesministerium Inneres](https://www.bmi.gv.at/412/Nationalratswahlen/)). In der Schweiz betrug die Beteiligung bei den letzten nationalen Parlamentswahlen sogar nur 45 Prozent (Quelle: [Bundesamt für Statistik](https://www.bfs.admin.ch/bfs/de/home/statistiken/politik/wahlen/nationalratswahlen/wahlbeteiligung.html)).
+
+Bei der Darstellung der Beteiligung ist zu beachten, dass sich die Wahlberechtigung in Liechtenstein im Lauf der Zeit verändert hat. Wie [oben](#einleitung) erläutert, sind insbesondere die verschiedenen Senkungen des Wahlrechtsalters (1969 von 21 auf 20 Jahre, 2000 von 20 auf 18 Jahre) sowie die Einführung des Frauenwahlrechts 1984 zu beachten. Die Wahlbeteiligung unterscheidet sich nur geringfügig zwischen Unter- und Oberland, wobei sie im Unterland meist etwas höher ist.  
+\
+\
+\
+
+
+# Panaschierstatistik
+
+Die Liechtensteiner Wahlberechtigten können die amtlichen Wahllisten entweder unverändert oder verändert einlegen. Wer eine Liste ändern möchte, kann einzelne Personen auf der ausgewählten Liste streichen und/oder Personen von anderen Listen dazuschreiben (sogenannte "Sympathiestimmen"), sofern es dafür auf der Liste Platz hat oder durch vorheriges Streichen Platz dafür geschaffen wurde.  
+\
+\
+
+## Stimmenherkunft
+
+```{r Wählerwanderung, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=5}
+panasch<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Panaschieren.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+names(panasch)[1] <- "Jahr"
+
+# Parteifarben
+farben <- c("#4D4E50", "#cc0033", "#bbbbbb", "#ffcc00", "#005fab")
+
+# Auswahl Spuren
+spuren <- data.frame(Jahr=rep(c(2021, 2017, 2013, 2009, 2005), each=2),
+                     Wahlkreis=rep(c("Oberland", "Unterland"), times=5),
+                     Sichtbar=c(TRUE, rep(FALSE, 9)),
+                     AnzParteien=rep(c(5, 4, 4, 3, 3), each=2))
+
+# Plot
+
+fig <- plot_ly()
+
+for(i in 1:length(spuren$Jahr)){
+  panasch2 <- panasch[panasch$Jahr == spuren$Jahr[i] & panasch$Wahlkreis == spuren$Wahlkreis[i],]
+  fig <- fig %>% add_trace(
+    type = "sankey",
+    orientation = "h",
+    visible=spuren$Sichtbar[i],
+    node = list(
+      label = rep(panasch2$Partei, times=2),
+      color = rep(farben[1:spuren$AnzParteien[i]], times=2),
+      customdata = c(panasch2$MoeglStimmen, panasch2$Parteistimmen),
+      pad = 10,
+      tickness = 20, 
+      line = list(
+        color = "black",
+        width = 0.5
+      ),
+      hovertemplate = "%{label}<extra>%{customdata:.0f} Stimmen</extra>"
+    ),
+    link = list(
+      source = rep(c(0:(spuren$AnzParteien[i]-1)), each=spuren$AnzParteien[i]),
+      target = rep(c(spuren$AnzParteien[i] : (2*spuren$AnzParteien[i]-1)), times=spuren$AnzParteien[i]),
+      value = as.numeric(as.matrix(panasch2[,5:(4+spuren$AnzParteien[i])], nrow=1)),
+      label = paste(rep(panasch2$Partei, each=spuren$AnzParteien[i]), 
+                    rep(panasch2$Partei, times=spuren$AnzParteien[i]), sep=" \u2192 "),
+      hovertemplate = "%{label}: <extra>%{value:.0f} Stimmen</extra>"
+    )
+  )
+}
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")
+) 
+
+fig <-fig %>% layout(
+  updatemenus = list(
+    list(
+      y=0.9,
+      x=1.25,
+      xanchor="right",
+      buttons = list(
+        list(method = "update",
+             args = list(list(visible = list(TRUE, FALSE, FALSE, FALSE, FALSE, 
+                                             FALSE, FALSE, FALSE, FALSE, FALSE))),
+             label = "2021 Oberland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, TRUE, FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, FALSE, FALSE))),
+             label = "2021 Unterland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, TRUE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, FALSE, FALSE))),
+             label = "2017 Oberland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, TRUE, FALSE, 
+                                           FALSE, FALSE, FALSE, FALSE, FALSE))),
+             label = "2017 Unterland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, TRUE, 
+                                           FALSE, FALSE, FALSE, FALSE, FALSE))),
+             label = "2013 Oberland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                           TRUE, FALSE, FALSE, FALSE, FALSE))),
+             label = "2013 Unterland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                           FALSE, TRUE, FALSE, FALSE, FALSE))),
+             label = "2009 Oberland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, TRUE, FALSE, FALSE))),
+             label = "2009 Unterland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, TRUE, FALSE))),
+             label = "2005 Oberland"),
+        list(method = "update",
+             args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE, 
+                                           FALSE, FALSE, FALSE, FALSE, TRUE))),
+             label = "2005 Unterland")
+      )
+    )
+  )
+)
+fig
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *
+\
+\
+Diese Darstellung gibt für die jeweilige Landtagswahl Auskunft darüber, an wen die Sympathiestimmen der einzelnen Wählerschaften gegangen sind. Sympathiestimmen geben Hinweise auf die Attraktivität der Kandidierenden, die Parteidisziplin und die Affinitäten zwischen den einzelnen Parteien. Jede erhaltene Sympathiestimme für die eine Partei bedeutet aber notwendigerweise eine verlorene Stimme für eine andere Partei. 
+
+*Lesebeispiel:* Für das Jahr 2021 und den Wahlkreis Oberland zeigt die Darstellung, dass von den 51'390 Stimmen der FBP-Wählenden 46'025 an die FBP, 2723 an die VU, 1394 an die FL, 487 an die DU und 761 an die DpL gingen. Folglich verbleibt der Grossteil der Stimmen bei der angestammten Partei. In Anbetracht der oft sehr knappen Wahlausgänge kann jedoch bereits eine kleine Stimmenverschiebung entscheidend sein.  
+\
+\
+\
+
+## Sympathiestimmen und verlorene Stimmen {.tabset}
+
+### Liechtenstein
+
+```{r Sympathiestimmen Liechtenstein, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4, message=FALSE,}
+# Daten einlesen
+stimmen<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Sympathiestimmen_VerloreneStimmen.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Parteien: Faktorstufen definieren
+stimmen$Partei <- factor(stimmen$Partei, levels = c("FBP", "VU", "FL", "DU", "DpL"))
+stimmen <- stimmen[order(stimmen$Partei),]
+
+# Parteifarben
+farben <- c("#4D4E50", "#cc0033", "#bbbbbb", "#ffcc00", "#005fab")
+
+# Plot
+fig<-plot_ly(stimmen[stimmen$Wahlkreis=="Liechtenstein",],
+             x=~Datum, 
+             y=~Sympathiestimmen,
+             color=~Partei,
+             colors=farben,
+             type="scatter",
+             mode="lines+markers",
+             visible=TRUE,
+             hovertemplate=paste("%{y:.0f}", " Stimmen", sep="")) 
+fig <- fig %>% add_trace(data=stimmen[stimmen$Wahlkreis=="Liechtenstein",],
+                         y=~VerloreneStimmen,
+                         visible=FALSE,
+                         hovertemplate=paste("%{y:.0f}", " Stimmen", sep="")) 
+fig <- fig %>% add_trace(data=stimmen[stimmen$Wahlkreis=="Liechtenstein",],
+                         y=~Bilanz,
+                         visible=FALSE,
+                         hovertemplate=paste("%{y:.0f}", " Stimmen", sep=""))
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(title=list(text="<b>Partei:</b>"),
+                y=0.8),
+    yaxis=list(title="Stimmen",
+               range=c(0, 8000)),
+    plot_bgcolor='#f5f5f5',
+    updatemenus = list(
+      list(
+        y=0.95,
+        x=0.05,
+        xanchor="left",
+        buttons = list(
+          list(method = "update",
+               args = list(list(visible=list(TRUE, TRUE, TRUE, TRUE, TRUE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE)),
+                           list(yaxis=list(range=c(0, 8500), title="Stimmen"))),
+               label = "Sympathiestimmen"),
+          list(method = "update",
+               args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE,
+                                             TRUE, TRUE, TRUE, TRUE, TRUE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE)),
+                           list(yaxis=list(range=c(0, 9000), title="Stimmen"))),
+               label = "Verlorene Stimmen"),
+          list(method = "update",
+               args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE,
+                                               FALSE, FALSE, FALSE, FALSE, FALSE,
+                                               TRUE, TRUE, TRUE, TRUE, TRUE)),
+                           list(yaxis=list(range=c(-2700, 2700), title="Stimmen"))),
+               label = "Bilanz")
+        )
+      )
+    )
+  )
+
+fig
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *  
+
+\
+In der direkten Gegenüberstellung von absoluten Sympathiestimmen und verlorenen Stimmen ist zu beachten, dass beide von der Parteistärke abhängen. Werden viele Wahlzettel einer Partei eingereicht, wird in der Tendenz auch die Anzahl veränderter Wahlzettel grösser sein als bei einer Partei, für die nur wenige Wahlzettel eingereicht worden sind. Zudem korreliert die Anzahl veränderter Stimmen mit der Anzahl der zur Verfügung stehenden Kandidierenden. Eine Partei mit wenigen Kandidierenden wird tendenziell auch weniger Sympathiestimmen erhalten als eine Partei mit vielen Kandidierenden.
+
+Bei den dargestellten Werten für das ganze Land ist zudem zu beachten, dass im Oberland mehr Sitze zu vergeben sind als im Unterland. Dementsprechend haben die Zahlen aus dem Oberland einen stärkeren Effekt auf das Total der Sympathiestimmen und der verlorenen Stimmen. 
+\
+\
+\
+
+### Oberland
+
+```{r Sympathiestimmen Oberland, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4, message=FALSE,}
+# Daten einlesen
+stimmen<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Sympathiestimmen_VerloreneStimmen.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Parteien: Faktorstufen definieren
+stimmen$Partei <- factor(stimmen$Partei, levels = c("FBP", "VU", "FL", "DU", "DpL"))
+stimmen <- stimmen[order(stimmen$Partei),]
+
+# Parteifarben
+farben <- c("#4D4E50", "#cc0033", "#bbbbbb", "#ffcc00", "#005fab")
+
+# Plot
+fig<-plot_ly(stimmen[stimmen$Wahlkreis=="Oberland",],
+             x=~Datum, 
+             y=~Sympathiestimmen,
+             color=~Partei,
+             colors=farben,
+             type="scatter",
+             mode="lines+markers",
+             visible=TRUE,
+             hovertemplate=paste("%{y:.0f}", " Stimmen", sep=""))
+fig <- fig %>% add_trace(data=stimmen[stimmen$Wahlkreis=="Oberland",],
+                         y=~VerloreneStimmen,
+                         visible=FALSE,
+                         hovertemplate=paste("%{y:.0f}", " Stimmen", sep="")) 
+fig <- fig %>% add_trace(data=stimmen[stimmen$Wahlkreis=="Oberland",],
+                         y=~Bilanz,
+                         visible=FALSE,
+                         hovertemplate=paste("%{y:.0f}", " Stimmen", sep=""))
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(title=list(text="<b>Partei:</b>"),
+                y=0.8),
+    yaxis=list(title="Stimmen",
+               range=c(0, 6000)),
+    plot_bgcolor='#f5f5f5',
+    updatemenus = list(
+      list(
+        y=0.95,
+        x=0.05,
+        xanchor="left",
+        buttons = list(
+          list(method = "update",
+               args = list(list(visible=list(TRUE, TRUE, TRUE, TRUE, TRUE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE)),
+                           list(yaxis=list(range=c(0, 6000), title="Stimmen"))),
+               label = "Sympathiestimmen"),
+          list(method = "update",
+               args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE,
+                                             TRUE, TRUE, TRUE, TRUE, TRUE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE)),
+                           list(yaxis=list(range=c(0, 6000), title="Stimmen"))),
+               label = "Verlorene Stimmen"),
+          list(method = "update",
+               args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE,
+                                               FALSE, FALSE, FALSE, FALSE, FALSE,
+                                               TRUE, TRUE, TRUE, TRUE, TRUE)),
+                           list(yaxis=list(range=c(-1800, 1800), title="Stimmen"))),
+               label = "Bilanz")
+        )
+      )
+    )
+  )
+
+fig
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *  
+
+\
+In der direkten Gegenüberstellung von absoluten Sympathiestimmen und verlorenen Stimmen ist zu beachten, dass beide von der Parteistärke abhängen. Werden viele Wahlzettel einer Partei eingereicht, wird in der Tendenz auch die Anzahl veränderter Wahlzettel grösser sein als bei einer Partei, für die nur wenige Wahlzettel eingereicht worden sind. Zudem korreliert die Anzahl veränderter Stimmen mit der Anzahl der zur Verfügung stehenden Kandidierenden. Eine Partei mit wenigen Kandidierenden wird tendenziell auch weniger Sympathiestimmen erhalten als eine Partei mit vielen Kandidierenden.
+\
+\
+\
+
+### Unterland
+
+```{r Sympathiestimmen Unterland, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4, message=FALSE,}
+# Daten einlesen
+stimmen<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Sympathiestimmen_VerloreneStimmen.csv",
+                  header=T, stringsAsFactors=F, sep=",", encoding = "UTF-8")
+
+# Parteien: Faktorstufen definieren
+stimmen$Partei <- factor(stimmen$Partei, levels = c("FBP", "VU", "FL", "DU", "DpL"))
+stimmen <- stimmen[order(stimmen$Partei),]
+
+# Parteifarben
+farben <- c("#4D4E50", "#cc0033", "#bbbbbb", "#ffcc00", "#005fab")
+
+# Plot
+fig<-plot_ly(stimmen[stimmen$Wahlkreis=="Unterland",],
+             x=~Datum, 
+             y=~Sympathiestimmen,
+             color=~Partei,
+             colors=farben,
+             type="scatter",
+             mode="lines+markers",
+             visible=TRUE,
+             hovertemplate=paste("%{y:.0f}", " Stimmen", sep=""))
+fig <- fig %>% add_trace(data=stimmen[stimmen$Wahlkreis=="Unterland",],
+                         y=~VerloreneStimmen,
+                         visible=FALSE,
+                         hovertemplate=paste("%{y:.0f}", " Stimmen", sep="")) 
+fig <- fig %>% add_trace(data=stimmen[stimmen$Wahlkreis=="Unterland",],
+                         y=~Bilanz,
+                         visible=FALSE,
+                         hovertemplate=paste("%{y:.0f}", " Stimmen", sep=""))
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(title=list(text="<b>Partei:</b>"),
+                y=0.8),
+    yaxis=list(title="Stimmen",
+               range=c(0, 2500)),
+    plot_bgcolor='#f5f5f5',
+    updatemenus = list(
+      list(
+        y=0.95,
+        x=0.05,
+        xanchor="left",
+        buttons = list(
+          list(method = "update",
+               args = list(list(visible=list(TRUE, TRUE, TRUE, TRUE, TRUE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE)),
+                           list(yaxis=list(range=c(0, 2500), title="Stimmen"))),
+               label = "Sympathiestimmen"),
+          list(method = "update",
+               args = list(list(visible=list(FALSE, FALSE, FALSE, FALSE, FALSE,
+                                             TRUE, TRUE, TRUE, TRUE, TRUE,
+                                             FALSE, FALSE, FALSE, FALSE, FALSE)),
+                           list(yaxis=list(range=c(0, 3000), title="Stimmen"))),
+               label = "Verlorene Stimmen"),
+          list(method = "update",
+               args = list(list(visible = list(FALSE, FALSE, FALSE, FALSE, FALSE,
+                                               FALSE, FALSE, FALSE, FALSE, FALSE,
+                                               TRUE, TRUE, TRUE, TRUE, TRUE)),
+                           list(yaxis=list(range=c(-900, 900), title="Stimmen"))),
+               label = "Bilanz")
+        )
+      )
+    )
+  )
+
+fig
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *  
+
+\
+In der direkten Gegenüberstellung von absoluten Sympathiestimmen und verlorenen Stimmen ist zu beachten, dass beide von der Parteistärke abhängen. Werden viele Wahlzettel einer Partei eingereicht, wird in der Tendenz auch die Anzahl veränderter Wahlzettel grösser sein als bei einer Partei, für die nur wenige Wahlzettel eingereicht worden sind. Zudem korreliert die Anzahl veränderter Stimmen mit der Anzahl der zur Verfügung stehenden Kandidierenden. Eine Partei mit wenigen Kandidierenden wird tendenziell auch weniger Sympathiestimmen erhalten als eine Partei mit vielen Kandidierenden.
+\
+\
+\
+
+# Indizes der Landtagswahlen {.tabset}
+
+In der Politikwissenschaft haben sich verschiedene Indizes etabliert, die für den Vergleich von Wahl- und Parteiensystemen verwendet werden. Dazu zählen der Disproportionalitätsindex nach Gallagher, der Volatilitätsindex nach Pedersen und der Fragmentierungsindex nach Laakso/Taagepera (Effektive Parteienzahl).
+\
+\
+
+## Gallagher Disproportionalitätsindex
+
+```{r Gallagher, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4}
+#######################################
+## Indizes Landtagswahlen: Gallagher ##
+#######################################
+
+indizes<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Indizes.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Variable umbenennen
+names(indizes)[1] <- "Datum"
+
+# Datum definieren:
+indizes$Datum<-as.Date(indizes$Datum, format="%d.%m.%Y")
+
+# Plot
+fig<-plot_ly()
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~Gallagher_L,
+                         visible=TRUE,
+                         line=list(color="#21908CFF"),
+                         marker=list(color="#21908CFF"),
+                         name="Liechtenstein",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~Gallagher_O,
+                         visible="legendonly",
+                         line=list(color="#440154FF"),
+                         marker=list(color="#440154FF"),
+                         name="Oberland",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~Gallagher_U,
+                         visible="legendonly",
+                         line=list(color="#FDE725FF"),
+                         marker=list(color="#FDE725FF"),
+                         name="Unterland",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(y=0.8),
+    yaxis=list(title="Indexwerte",
+               range=c(0, 10)),
+    xaxis=list(type="date",
+               title="",
+               tickvals=indizes$Datum,
+               ticktext=indizes$Datum),
+    plot_bgcolor='#f5f5f5'
+  )
+
+fig
+
+# Daten-Download Gallagher
+igall <- data.frame(Datum = indizes$Datum,
+                    Liechtenstein = round(indizes$Gallagher_L, 1),
+                    Oberland = round(indizes$Gallagher_O, 1),
+                    Unterland = round(indizes$Gallagher_U, 1))
+
+igall %>% 
+  download_this(output_name = "Gallagher_Index",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *  
+
+\
+Der **Gallagher-Index** gibt Auskunft über die Disproportionalität zwischen Stimmen- und Sitzanteil in einem Parlament. Damit wird ermittelt, wie unverfälscht sich der Wille der Wählerschaft in der Sitzverteilung eines Parlaments abbildet. Viele unterschiedliche Faktoren können zur Disproportionalität beitragen, so etwa die Wahlkreiseinteilung, allfällige Sperrklauseln oder das Berechnungsverfahren bei der Mandatszuteilung. 
+
+Der von Michael Gallagher vorgeschlagene Index kann Werte zwischen 0 und 100 annehmen. Je grösser die Disproportionalität zwischen Stimmenanteil (V~i~) und Sitzanteil (S~i~) der Parteien (i) ist, desto grösser ist der entsprechende Indexwert: $$GI = \sqrt{ \frac{1}{2} \sum_{i=1}^{n}(V_{i}-S_{i})^2}$$
+\
+\
+
+## Pedersen Volatilitätsindex
+
+```{r Pedersen, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4}
+######################################
+## Indizes Landtagswahlen: Pedersen ##
+######################################
+
+indizes<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Indizes.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Variable umbenennen
+names(indizes)[1] <- "Datum"
+
+# Datum definieren:
+indizes$Datum<-as.Date(indizes$Datum, format="%d.%m.%Y")
+
+# Plot
+fig<-plot_ly()
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~Pedersen_Liechtenstein,
+                         visible=TRUE,
+                         line=list(color="#21908CFF"),
+                         marker=list(color="#21908CFF"),
+                         name="Liechtenstein",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~Pedersen_Oberland,
+                         visible="legendonly",
+                         line=list(color="#440154FF"),
+                         marker=list(color="#440154FF"),
+                         name="Oberland",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~Pedersen_Unterland,
+                         visible="legendonly",
+                         line=list(color="#FDE725FF"),
+                         marker=list(color="#FDE725FF"),
+                         name="Unterland",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(y=0.8),
+    yaxis=list(title="Indexwerte",
+               range=c(0, 25)),
+    xaxis=list(type="date",
+               title="",
+               tickvals=indizes$Datum,
+               ticktext=indizes$Datum),
+    plot_bgcolor='#f5f5f5'
+  )
+
+fig
+
+# Daten-Download Pedersen
+ipede <- data.frame(Datum = indizes$Datum,
+                    Liechtenstein = round(indizes$Pedersen_Liechtenstein, 1),
+                    Oberland = round(indizes$Pedersen_Oberland, 1),
+                    Unterland = round(indizes$Pedersen_Unterland, 1))
+ipede <- ipede[2:nrow(ipede),]
+
+ipede %>% 
+  download_this(output_name = "Pedersen_Index",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *  
+
+\
+Der **Pedersen-Index** ist ein Mass für die Volatilität (Schwankung) der Parteipräferenzen der Wählerschaft zwischen zwei Wahlen. Dieser von Mogens N. Pedersen entwickelte Index kann Werte zwischen 0 (keine Veränderungen zwischen zwei Wahlgängen) und 100 (keine Partei der vorangehenden Wahl erhält Stimmen) annehmen. Er berechnet sich anhand der Parteistärke (V) der Parteien (i) der betrachteten Wahl (t) im Vergleich zur vorangehenden Wahl (t-1): $$PI = \sum_{i=1}^{n}\frac{|V_{i}(t)-V_{i}(t-1)|}{2}$$
+\
+\
+
+## Effektive Parteienzahl
+
+```{r ENP-Index, echo=FALSE, warning=FALSE, fig.width=8.7, fig.height=4}
+#################################
+## Indizes Landtagswahlen: ENP ##
+#################################
+
+indizes<-read.csv("C:/Users/pr/Datenpool/Daten/LT-Wahlen_Indizes.csv",
+                  header=T, stringsAsFactors=F, sep=";", encoding = "UTF-8")
+
+# Variable umbenennen
+names(indizes)[1] <- "Datum"
+
+# Datum definieren:
+indizes$Datum<-as.Date(indizes$Datum, format="%d.%m.%Y")
+
+# Plot
+fig<-plot_ly()
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~ENP_L,
+                         visible=TRUE,
+                         line=list(color="#21908CFF"),
+                         marker=list(color="#21908CFF"),
+                         name="Liechtenstein",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~ENP_O,
+                         visible="legendonly",
+                         line=list(color="#440154FF"),
+                         marker=list(color="#440154FF"),
+                         name="Oberland",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+fig <- fig %>% add_trace(data=indizes,
+                         x=~Datum,
+                         y=~ENP_U,
+                         visible="legendonly",
+                         line=list(color="#FDE725FF"),
+                         marker=list(color="#FDE725FF"),
+                         name="Unterland",
+                         hovertemplate="%{y:.1f}",
+                         type="scatter",
+                         mode="lines+markers") 
+
+
+fig<-config(fig,
+            displaylogo=FALSE, 
+            locale="de",
+            scrollZoom=FALSE,
+            displayModeBar = TRUE,
+            modeBarButtonsToRemove=c("select2d", "lasso2d")) %>%
+  layout(
+    hovermode="x unified",
+    legend=list(y=0.8),
+    yaxis=list(title="Effektive Parteien",
+               range=c(0, 4)),
+    xaxis=list(type="date",
+               title="",
+               tickvals=indizes$Datum,
+               ticktext=indizes$Datum),
+    plot_bgcolor='#f5f5f5'
+  )
+
+fig
+
+# Daten-Download ENP
+ienp <- data.frame(Datum = indizes$Datum,
+                   Liechtenstein = round(indizes$ENP_L, 1),
+                   Oberland = round(indizes$ENP_O, 1),
+                   Unterland = round(indizes$ENP_U, 1))
+
+ienp %>% 
+  download_this(output_name = "ENP_Index",
+                output_extension = ".csv",
+                button_label = "Daten (csv)",
+                button_type = "default",
+                has_icon = TRUE,
+                icon = "fa fa-save",
+                self_contained = TRUE)
+
+```
+*Datenquelle: Eigene Berechnungen auf Basis der amtlichen Wahlergebnisse  *  
+
+\
+Die **Effektive Parteienzahl** nach Markku Laakso und Rein Taagepera ist ein Mass für die politische Fragmentierung. Dazu wird die Anzahl Parteien gezählt, wobei die Parteien (i) nach ihrem jeweiligen Stimmenanteil (p~i~) gewichtet werden. Nur wenn alle Parteien gleich stark sind, entspricht die Anzahl der Parteien der effektiven Parteienzahl. Andernfalls ist die effektive Parteienzahl kleiner als die tatsächliche Anzahl der Parteien. $$EPZ = \frac{1}{\sum_{i=1}^{n}p_{i}^2}$$
+\
+\
+
+

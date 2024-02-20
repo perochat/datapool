@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title> </title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.1/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+<script src="site_libs/plotly-locale-de-2.11.1/de.js"></script>
+<link href="site_libs/font-awesome-5.13.0/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.13.0/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Datenpool: Landtag</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Landtag_2_Mandate.html">Mandate</a>
+</li>
+<li>
+  <a href="Landtag_3_Landtagswahlen.html">Landtagswahlen</a>
+</li>
+<li>
+  <a href="Landtag_4_Umfragen.html">Umfragen Landtagswahlen</a>
+</li>
+<li>
+  <a href="Landtag_5_Meinungen.html">Meinungen zum Landtag</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore"> </h1>
+
+</div>
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<p><br />
+<em>Stand 20.02.2024</em><br />
+<br />
+</p>
+<p>Der Liechtensteiner Landtag gehört zu den kleinsten nationalen
+Parlamenten der Welt. Gemäss der <a
+href="https://www.ipu.org/">Inter-Parliamentary Union (IPU)</a> haben
+von 193 Staaten nur deren elf ein noch kleineres nationales Parlament
+als Liechtenstein (Stand 26.04.2023). Dabei handelt es sich um zehn
+kleine Inselstaaten sowie das Fürstentum Monaco, das 24
+Parlamentsmitglieder hat.</p>
+<p>Die folgenden Grafiken geben Auskunft über die Anzahl Sitze pro
+Partei sowie die Stärke der verschiedenen Parteien.</p>
+<p><br />
+<br />
+</p>
+<div id="mandate" class="section level2">
+<h2>Mandate</h2>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-83723af2880156d5afc9" style="width:835.2px;height:432px;"></div>
+<script type="application/json" data-for="htmlwidget-83723af2880156d5afc9">{"x":{"visdat":{"3a743dd01572":["function () ","plotlyVisDat"],"3a748276605":["function () ","data"],"3a746b41571":["function () ","data"],"3a744bc74af4":["function () ","data"],"3a7424d75f85":["function () ","data"],"3a74596749b0":["function () ","data"],"3a74e0d596c":["function () ","data"],"3a74549e4b8b":["function () ","data"],"3a747acf39ae":["function () ","data"],"3a7472cb52eb":["function () ","data"],"3a744d8e6a80":["function () ","data"],"3a743d06154d":["function () ","data"],"3a7444713e9":["function () ","data"],"3a742e57768a":["function () ","data"],"3a7468581123":["function () ","data"],"3a742254959":["function () ","data"],"3a7470925544":["function () ","data"],"3a7446f17916":["function () ","data"],"3a7498f31e":["function () ","data"],"3a74944c2":["function () ","data"],"3a7438463c63":["function () ","data"],"3a742ae5534a":["function () ","data"],"3a744adc6c0d":["function () ","data"],"3a743a50190c":["function () ","data"],"3a74bbeffc":["function () ","data"],"3a745e646697":["function () ","data"],"3a742aec45e1":["function () ","data"],"3a742a5c50b2":["function () ","data"],"3a7451981f5c":["function () ","data"],"3a746e001a1":["function () ","data"],"3a7413ef161":["function () ","data"],"3a74561c33a3":["function () ","data"],"3a74353712e0":["function () ","data"],"3a74713234bf":["function () ","data"],"3a74721a7ea5":["function () ","data"]},"cur_data":"3a74721a7ea5","attrs":{"3a748276605":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#4D4E50"},"name":"FBP","visible":true,"hovertemplate":"%{y} Mandate","inherit":true},"3a746b41571":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#4D4E50"},"name":"FBP - Oberland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a744bc74af4":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#6F7073"},"name":"FBP - Unterland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7424d75f85":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#4D4E50"},"name":"FBP - Frauen","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a74596749b0":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#6F7073"},"name":"FBP - Männer","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a74e0d596c":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#4D4E50"},"name":"FBP","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true},"3a74549e4b8b":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#cc0033"},"name":"VU","visible":true,"hovertemplate":"%{y} Mandate","inherit":true},"3a747acf39ae":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#cc0033"},"name":"VU - Oberland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7472cb52eb":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#FF4F79"},"name":"VU - Unterland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a744d8e6a80":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#cc0033"},"name":"VU - Frauen","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a743d06154d":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#FF4F79"},"name":"VU - Männer","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7444713e9":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#cc0033"},"name":"VU","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true},"3a742e57768a":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#bbbbbb"},"name":"FL","visible":true,"hovertemplate":"%{y} Mandate","inherit":true},"3a7468581123":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#bbbbbb"},"name":"FL - Oberland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a742254959":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#D9D9D9"},"name":"FL - Unterland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7470925544":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#bbbbbb"},"name":"FL - Frauen","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7446f17916":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#D9D9D9"},"name":"FL - Männer","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7498f31e":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#bbbbbb"},"name":"FL","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true},"3a74944c2":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#ffcc00"},"name":"DU","visible":true,"hovertemplate":"%{y} Mandate","inherit":true},"3a7438463c63":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#ffcc00"},"name":"DU - Oberland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a742ae5534a":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#FFE471"},"name":"DU - Unterland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a744adc6c0d":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#ffcc00"},"name":"DU - Frauen","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a743a50190c":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#FFE471"},"name":"DU - Männer","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a74bbeffc":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#ffcc00"},"name":"DU","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true},"3a745e646697":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#005fab"},"name":"DpL","visible":true,"hovertemplate":"%{y} Mandate","inherit":true},"3a742aec45e1":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#005fab"},"name":"DpL - Oberland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a742a5c50b2":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#018CFF"},"name":"DpL - Unterland","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7451981f5c":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#005fab"},"name":"DpL - Frauen","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a746e001a1":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#018CFF"},"name":"DpL - Männer","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a7413ef161":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#005fab"},"name":"DpL","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true},"3a74561c33a3":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#3B528BFF"},"name":"Frauen","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a74353712e0":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#5DC863FF"},"name":"Männer","visible":false,"hovertemplate":"%{y} Mandate","inherit":true},"3a74713234bf":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#3B528BFF"},"name":"Frauen","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true},"3a74721a7ea5":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"bar","width":{},"marker":{"color":"#5DC863FF"},"name":"Männer","visible":false,"hovertemplate":"%{y:.1f}%","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"barmode":"stack","xaxis":{"domain":[0,1],"automargin":true,"tickvals":[0.447727272727273,0.447727272727273,0.447727272727273,1.42272727272727,1.42272727272727,1.42272727272727,1.98863636363636,1.98863636363636,1.98863636363636,2.57727272727273,2.57727272727273,2.57727272727273,3.19318181818182,3.19318181818182,3.19318181818182,3.78409090909091,3.78409090909091,3.78409090909091,4.76818181818182,4.76818181818182,4.76818181818182,5.75,5.75,5.75,6.74772727272727,6.74772727272727,6.74772727272727,7.74675324675325,7.74675324675325,7.74675324675325,8.74675324675325,8.74675324675325,8.74675324675325,9.74545454545455,9.74545454545455,9.74545454545455,10.6340909090909,10.6340909090909,10.6340909090909,11.5159090909091,11.5159090909091,11.5159090909091,12.1159090909091,12.1159090909091,12.1159090909091,12.6386363636364,12.6386363636364,12.6386363636364,13.5545454545455,13.5545454545455,13.5545454545455,14.5659090909091,14.5659090909091,14.5659090909091,15.5636363636364,15.5636363636364,15.5636363636364,16.55,16.55,16.55,17.5477272727273,17.5477272727273,17.5477272727273,18.5477272727273,18.5477272727273,18.5477272727273,19.5477272727273,19.5477272727273,19.5477272727273],"ticktext":["1945-04-29","1945-04-29","1945-04-29","1949-02-06","1949-02-06","1949-02-06","1953-02-15","1953-02-15","1953-02-15","1953-06-14","1953-06-14","1953-06-14","1957-09-01","1957-09-01","1957-09-01","1958-03-23","1958-03-23","1958-03-23","1962-03-25","1962-03-25","1962-03-25","1966-02-06","1966-02-06","1966-02-06","1970-02-01","1970-02-01","1970-02-01","1974-02-03","1974-02-03","1974-02-03","1978-02-02","1978-02-02","1978-02-02","1982-02-07","1982-02-07","1982-02-07","1986-02-02","1986-02-02","1986-02-02","1989-03-05","1989-03-05","1989-03-05","1993-02-07","1993-02-07","1993-02-07","1993-10-24","1993-10-24","1993-10-24","1997-02-02","1997-02-02","1997-02-02","2001-02-11","2001-02-11","2001-02-11","2005-03-13","2005-03-13","2005-03-13","2009-02-08","2009-02-08","2009-02-08","2013-02-03","2013-02-03","2013-02-03","2017-02-05","2017-02-05","2017-02-05","2021-02-07","2021-02-07","2021-02-07"],"title":""},"yaxis":{"domain":[0,1],"automargin":true,"title":"Anzahl Mandate","range":[0,25]},"hovermode":"x unified","legend":{"y":0.7},"plot_bgcolor":"#f5f5f5","updatemenus":[{"y":0.9,"x":1.35,"xanchor":"right","buttons":[{"method":"update","args":[{"visible":[true,false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false]},{"yaxis":{"range":[0,25],"title":"Anzahl Mandate"}}],"label":"Parteien (absolut)"},{"method":"update","args":[{"visible":[false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false]},{"yaxis":{"range":[0,100],"title":"Anteil Mandate (in %)"}}],"label":"Parteien (prozentual)"},{"method":"update","args":[{"visible":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,true,false,false]},{"yaxis":{"range":[0,25],"title":"Anzahl Mandate"}}],"label":"Geschlecht (absolut)"},{"method":"update","args":[{"visible":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,true]},{"yaxis":{"range":[0,100],"title":"Anteil Mandate (in %)"}}],"label":"Geschlecht (prozentual)"},{"method":"update","args":[{"visible":[false,true,true,false,false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,false,false,false]},{"yaxis":{"range":[0,25],"title":"Anzahl Mandate"}}],"label":"Parteien und Wahlkreise"},{"method":"update","args":[{"visible":[false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,true,true,false,false,false,false,false]},{"yaxis":{"range":[0,25],"title":"Anzahl Mandate"}}],"label":"Parteien und Geschlecht"}]}],"showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false,"locale":"de","displaylogo":false,"scrollZoom":false,"displayModeBar":true,"modeBarButtonsToRemove":["select2d","lasso2d"]},"data":[{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[8,8,8,8,8,9,8,8,7,8,7,7,7,12,12,11,10,13,12,11,10,9,10],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#4D4E50","line":{"color":"rgba(31,119,180,1)"}},"name":"FBP","visible":true,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[4,4,4,4,4,5,5,4,4,4,4,4,4,7,7,6,6,7,7,6,6,5,6],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#4D4E50","line":{"color":"rgba(255,127,14,1)"}},"name":"FBP - Oberland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[4,4,4,4,4,4,3,4,3,3,3,3,3,5,5,5,4,6,5,5,4,4,4],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#6F7073","line":{"color":"rgba(44,160,44,1)"}},"name":"FBP - Unterland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[1,1,1,1,0,1,3,2,1,1,3],"type":"bar","width":[0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#4D4E50","line":{"color":"rgba(214,39,40,1)"}},"name":"FBP - Frauen","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[8,8,8,8,8,9,8,8,7,8,7,7,6,11,11,10,10,12,9,9,9,8,7],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#6F7073","line":{"color":"rgba(148,103,189,1)"}},"name":"FBP - Männer","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(148,103,189,1)"},"error_x":{"color":"rgba(148,103,189,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[53.33333333,53.33333333,53.33333333,53.33333333,53.33333333,60,53.33333333,53.33333333,46.66666667,53.33333333,46.66666667,46.66666667,46.66666667,48,48,44,40,52,48,44,40,36,40],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#4D4E50","line":{"color":"rgba(140,86,75,1)"}},"name":"FBP","visible":false,"hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"error_y":{"color":"rgba(140,86,75,1)"},"error_x":{"color":"rgba(140,86,75,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[7,7,7,7,7,6,7,7,8,7,8,8,8,13,11,13,13,11,10,13,8,8,10],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#cc0033","line":{"color":"rgba(227,119,194,1)"}},"name":"VU","visible":true,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(227,119,194,1)"},"error_x":{"color":"rgba(227,119,194,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[5,5,5,5,5,4,4,5,5,5,5,5,5,8,7,8,8,7,6,8,5,5,6],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#cc0033","line":{"color":"rgba(127,127,127,1)"}},"name":"VU - Oberland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(127,127,127,1)"},"error_x":{"color":"rgba(127,127,127,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[2,2,2,2,2,2,3,2,3,3,3,3,3,5,4,5,5,4,4,5,3,3,4],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#FF4F79","line":{"color":"rgba(188,189,34,1)"}},"name":"VU - Unterland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(188,189,34,1)"},"error_x":{"color":"rgba(188,189,34,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[0,0,0,1,1,2,2,4,3,2,3],"type":"bar","width":[0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#cc0033","line":{"color":"rgba(23,190,207,1)"}},"name":"VU - Frauen","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(23,190,207,1)"},"error_x":{"color":"rgba(23,190,207,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[7,7,7,7,7,6,7,7,8,7,8,8,8,13,11,12,12,9,8,9,5,6,7],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#FF4F79","line":{"color":"rgba(31,119,180,1)"}},"name":"VU - Männer","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[46.66666667,46.66666667,46.66666667,46.66666667,46.66666667,40,46.66666667,46.66666667,53.33333333,46.66666667,53.33333333,53.33333333,53.33333333,52,44,52,52,44,40,52,32,32,40],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#cc0033","line":{"color":"rgba(255,127,14,1)"}},"name":"VU","visible":false,"hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[2,1,2,1,3,1,3,3,3],"type":"bar","width":[0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#bbbbbb","line":{"color":"rgba(44,160,44,1)"}},"name":"FL","visible":true,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[1,1,1,1,2,1,2,2,2],"type":"bar","width":[0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#bbbbbb","line":{"color":"rgba(214,39,40,1)"}},"name":"FL - Oberland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[12.1159090909091,13.5545454545455,15.5636363636364,17.5477272727273,18.5477272727273,19.5477272727273],"y":[1,1,1,1,1,1],"type":"bar","width":[0.168181818181818,0.954545454545455,0.927272727272727,0.95,0.95,0.95],"marker":{"color":"#D9D9D9","line":{"color":"rgba(148,103,189,1)"}},"name":"FL - Unterland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(148,103,189,1)"},"error_x":{"color":"rgba(148,103,189,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[0,1,0,1,0,1],"type":"bar","width":[0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#bbbbbb","line":{"color":"rgba(140,86,75,1)"}},"name":"FL - Frauen","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(140,86,75,1)"},"error_x":{"color":"rgba(140,86,75,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[2,1,2,1,2,1,2,3,2],"type":"bar","width":[0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#D9D9D9","line":{"color":"rgba(227,119,194,1)"}},"name":"FL - Männer","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(227,119,194,1)"},"error_x":{"color":"rgba(227,119,194,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[8,4,8,4,12,4,12,12,12],"type":"bar","width":[0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#bbbbbb","line":{"color":"rgba(127,127,127,1)"}},"name":"FL","visible":false,"hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"error_y":{"color":"rgba(127,127,127,1)"},"error_x":{"color":"rgba(127,127,127,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[17.5477272727273,18.5477272727273],"y":[4,5],"type":"bar","width":[0.95,0.95],"marker":{"color":"#ffcc00","line":{"color":"rgba(188,189,34,1)"}},"name":"DU","visible":true,"hovertemplate":["%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(188,189,34,1)"},"error_x":{"color":"rgba(188,189,34,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[17.5477272727273,18.5477272727273],"y":[2,3],"type":"bar","width":[0.95,0.95],"marker":{"color":"#ffcc00","line":{"color":"rgba(23,190,207,1)"}},"name":"DU - Oberland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(23,190,207,1)"},"error_x":{"color":"rgba(23,190,207,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[17.5477272727273,18.5477272727273],"y":[2,2],"type":"bar","width":[0.95,0.95],"marker":{"color":"#FFE471","line":{"color":"rgba(31,119,180,1)"}},"name":"DU - Unterland","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[17.5477272727273,18.5477272727273,19.5477272727273],"y":[0,0,0],"type":"bar","width":[0.95,0.95,0.95],"marker":{"color":"#ffcc00","line":{"color":"rgba(255,127,14,1)"}},"name":"DU - Frauen","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[17.5477272727273,18.5477272727273,19.5477272727273],"y":[4,5,0],"type":"bar","width":[0.95,0.95,0.95],"marker":{"color":"#FFE471","line":{"color":"rgba(44,160,44,1)"}},"name":"DU - Männer","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[17.5477272727273,18.5477272727273],"y":[16,20],"type":"bar","width":[0.95,0.95],"marker":{"color":"#ffcc00","line":{"color":"rgba(214,39,40,1)"}},"name":"DU","visible":false,"hovertemplate":["%{y:.1f}%","%{y:.1f}%"],"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[19.5477272727273],"y":[2],"type":"bar","width":0.95,"marker":{"color":"#005fab","line":{"color":"rgba(148,103,189,1)"}},"name":"DpL","visible":true,"hovertemplate":"%{y} Mandate","error_y":{"color":"rgba(148,103,189,1)"},"error_x":{"color":"rgba(148,103,189,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[19.5477272727273],"y":[1],"type":"bar","width":0.95,"marker":{"color":"#005fab","line":{"color":"rgba(140,86,75,1)"}},"name":"DpL - Oberland","visible":false,"hovertemplate":"%{y} Mandate","error_y":{"color":"rgba(140,86,75,1)"},"error_x":{"color":"rgba(140,86,75,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[19.5477272727273],"y":[1],"type":"bar","width":0.95,"marker":{"color":"#018CFF","line":{"color":"rgba(227,119,194,1)"}},"name":"DpL - Unterland","visible":false,"hovertemplate":"%{y} Mandate","error_y":{"color":"rgba(227,119,194,1)"},"error_x":{"color":"rgba(227,119,194,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[19.5477272727273],"y":[0],"type":"bar","width":0.95,"marker":{"color":"#005fab","line":{"color":"rgba(127,127,127,1)"}},"name":"DpL - Frauen","visible":false,"hovertemplate":"%{y} Mandate","error_y":{"color":"rgba(127,127,127,1)"},"error_x":{"color":"rgba(127,127,127,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[19.5477272727273],"y":[2],"type":"bar","width":0.95,"marker":{"color":"#018CFF","line":{"color":"rgba(188,189,34,1)"}},"name":"DpL - Männer","visible":false,"hovertemplate":"%{y} Mandate","error_y":{"color":"rgba(188,189,34,1)"},"error_x":{"color":"rgba(188,189,34,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[19.5477272727273],"y":[8],"type":"bar","width":0.95,"marker":{"color":"#005fab","line":{"color":"rgba(23,190,207,1)"}},"name":"DpL","visible":false,"hovertemplate":"%{y:.1f}%","error_y":{"color":"rgba(23,190,207,1)"},"error_x":{"color":"rgba(23,190,207,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[1,1,1,2,1,3,6,6,5,3,7],"type":"bar","width":[0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#3B528BFF","line":{"color":"rgba(31,119,180,1)"}},"name":"Frauen","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[15,15,15,15,15,15,15,15,15,15,15,15,14,24,24,23,24,22,19,19,20,22,18],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#5DC863FF","line":{"color":"rgba(255,127,14,1)"}},"name":"Männer","visible":false,"hovertemplate":["%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate","%{y} Mandate"],"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[6.666666667,4,4,8,4,12,24,24,20,12,28],"type":"bar","width":[0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#3B528BFF","line":{"color":"rgba(44,160,44,1)"}},"name":"Frauen","visible":false,"hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.447727272727273,1.42272727272727,1.98863636363636,2.57727272727273,3.19318181818182,3.78409090909091,4.76818181818182,5.75,6.74772727272727,7.74675324675325,8.74675324675325,9.74545454545455,10.6340909090909,11.5159090909091,12.1159090909091,12.6386363636364,13.5545454545455,14.5659090909091,15.5636363636364,16.55,17.5477272727273,18.5477272727273,19.5477272727273],"y":[100,100,100,100,100,100,100,100,100,100,100,100,93.33333333,96,96,92,96,88,76,76,80,88,72],"type":"bar","width":[0.895454545454546,0.954545454545455,0.0772727272727273,1,0.131818181818182,0.95,0.918181818181818,0.945454545454545,0.95,0.948051948051948,0.951948051948052,0.945454545454545,0.731818181818182,0.931818181818182,0.168181818181818,0.777272727272727,0.954545454545455,0.968181818181818,0.927272727272727,0.945454545454545,0.95,0.95,0.95],"marker":{"color":"#5DC863FF","line":{"color":"rgba(214,39,40,1)"}},"name":"Männer","visible":false,"hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p><em>Datenquelle: Amtliche Wahlergebnisse </em><br />
+<br />
+</p>
+<p>Bis 1993 waren jeweils nur zwei Parteien in Landtag vertreten. Ab
+1993 schafften drei und seit 2013 jeweils vier Parteien den Einzug ins
+Parlament. Zusätzlich zu den ordentlichen Abgeordneten gibt es im
+Landtag stellvertretende Abgeordnete. Die Anzahl stellvertretende
+Abgeordnete hängt von der Stärke der im Landtag vertretenen Parteien ab
+und kann sich somit nach jeder Wahl verändern.</p>
+<p>In der Abbildung ist die Mandatsverteilung seit 1945 dargestellt. Die
+Daten beziehen sich jeweils auf den Tag der Wahl. Rücktritte,
+Parteiwechsel und -austritte werden nicht berücksichtigt.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="parteistärken" class="section level2">
+<h2>Parteistärken</h2>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-fa8934397aacd54939a9" style="width:835.2px;height:720px;"></div>
+<script type="application/json" data-for="htmlwidget-fa8934397aacd54939a9">{"x":{"data":[{"x":["1974-02-03","1978-02-02","1982-02-07","1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[50.38194444,51.14234234,47.03945135,43.3081678,42.84993449,44.83267174,41.83970393,39.7266635,50.46674809,49.38734684,44.03455419,40.23161041,35.73424521,36.22808165],"showlegend":true,"mode":"lines+markers","legendgroup":"FBP","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"FBP","marker":{"color":"rgba(77,78,80,1)","line":{"color":"rgba(77,78,80,1)"}},"textfont":{"color":"rgba(77,78,80,1)"},"error_y":{"color":"rgba(77,78,80,1)"},"error_x":{"color":"rgba(77,78,80,1)"},"line":{"color":"rgba(77,78,80,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["1974-02-03","1978-02-02","1982-02-07","1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[46.69753086,48.85765766,52.96054865,49.81963103,46.82473307,44.97188224,49.79433285,48.66999103,41.04461527,37.98995203,47.20084623,33.22873509,33.53263814,35.56333421],"showlegend":true,"mode":"lines+markers","legendgroup":"VU","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"VU","marker":{"color":"rgba(204,0,51,1)","line":{"color":"rgba(204,0,51,1)"}},"textfont":{"color":"rgba(204,0,51,1)"},"error_y":{"color":"rgba(204,0,51,1)"},"error_x":{"color":"rgba(204,0,51,1)"},"line":{"color":"rgba(204,0,51,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[6.872201171,7.362493379,10.19544602,8.365963217,11.60334547,8.488636636,12.62270113,8.764599586,11.03805837,12.39368906,12.60642938],"showlegend":true,"mode":"lines+markers","legendgroup":"FL","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"FL","marker":{"color":"rgba(187,187,187,1)","line":{"color":"rgba(187,187,187,1)"}},"textfont":{"color":"rgba(187,187,187,1)"},"error_y":{"color":"rgba(187,187,187,1)"},"error_x":{"color":"rgba(187,187,187,1)"},"line":{"color":"rgba(187,187,187,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2013-02-03","2017-02-05","2021-02-07"],"y":[15.50159614,18.33942759,3.99066562],"showlegend":true,"mode":"lines+markers","legendgroup":"DU","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"DU","marker":{"color":"rgba(255,204,0,1)","line":{"color":"rgba(255,204,0,1)"}},"textfont":{"color":"rgba(255,204,0,1)"},"error_y":{"color":"rgba(255,204,0,1)"},"error_x":{"color":"rgba(255,204,0,1)"},"line":{"color":"rgba(255,204,0,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2021-02-07"],"y":[11.61148914],"showlegend":true,"mode":"lines+markers","legendgroup":"DpL","hovertemplate":"%{y:.1f}%","type":"scatter","name":"DpL","marker":{"color":"rgba(0,95,171,1)","line":{"color":"rgba(0,95,171,1)"}},"textfont":{"color":"rgba(0,95,171,1)"},"error_y":{"color":"rgba(0,95,171,1)"},"error_x":{"color":"rgba(0,95,171,1)"},"line":{"color":"rgba(0,95,171,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["1974-02-03"],"y":[2.920524691],"showlegend":true,"mode":"lines+markers","legendgroup":"CSP","hovertemplate":"%{y:.1f}%","type":"scatter","visible":"legendonly","name":"CSP","marker":{"color":"rgba(0,176,80,1)","line":{"color":"rgba(0,176,80,1)"}},"textfont":{"color":"rgba(0,176,80,1)"},"error_y":{"color":"rgba(0,176,80,1)"},"error_x":{"color":"rgba(0,176,80,1)"},"line":{"color":"rgba(0,176,80,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["1989-03-05"],"y":[2.962839062],"showlegend":true,"mode":"lines+markers","legendgroup":"ÜLL","hovertemplate":"%{y:.1f}%","type":"scatter","visible":"legendonly","name":"ÜLL","marker":{"color":"rgba(157,53,139,1)","line":{"color":"rgba(157,53,139,1)"}},"textfont":{"color":"rgba(157,53,139,1)"},"error_y":{"color":"rgba(157,53,139,1)"},"error_x":{"color":"rgba(157,53,139,1)"},"line":{"color":"rgba(157,53,139,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["1974-02-03","1978-02-02","1982-02-07","1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[48.77853881,49.96796925,45.00814996,41.09073414,39.98596665,42.25039357,39.83853242,37.60213639,48.15643275,46.72296703,41.73624645,39.2768,33.65545922,34.73306691],"showlegend":false,"mode":"lines+markers","legendgroup":"FBP","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"FBP","marker":{"color":"rgba(77,78,80,1)","line":{"color":"rgba(77,78,80,1)"}},"textfont":{"color":"rgba(77,78,80,1)"},"error_y":{"color":"rgba(77,78,80,1)"},"error_x":{"color":"rgba(77,78,80,1)"},"line":{"color":"rgba(77,78,80,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["1974-02-03","1978-02-02","1982-02-07","1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[48.53881279,50.03203075,54.99185004,51.29337182,48.11457817,46.82326622,51.09223096,50.92988959,42.26315789,38.96829586,48.87270489,34.55004444,34.38993445,36.90132186],"showlegend":false,"mode":"lines+markers","legendgroup":"VU","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"VU","marker":{"color":"rgba(204,0,51,1)","line":{"color":"rgba(204,0,51,1)"}},"textfont":{"color":"rgba(204,0,51,1)"},"error_y":{"color":"rgba(204,0,51,1)"},"error_x":{"color":"rgba(204,0,51,1)"},"line":{"color":"rgba(204,0,51,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[7.61589404,8.139342909,10.92634021,9.069236622,11.46797401,9.580409357,14.30873711,9.391048655,11.41902222,13.30936773,13.68036343],"showlegend":false,"mode":"lines+markers","legendgroup":"FL","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"FL","marker":{"color":"rgba(187,187,187,1)","line":{"color":"rgba(187,187,187,1)"}},"textfont":{"color":"rgba(187,187,187,1)"},"error_y":{"color":"rgba(187,187,187,1)"},"error_x":{"color":"rgba(187,187,187,1)"},"line":{"color":"rgba(187,187,187,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["2013-02-03","2017-02-05","2021-02-07"],"y":[14.75413333,18.6452386,5.034668853],"showlegend":false,"mode":"lines+markers","legendgroup":"DU","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"DU","marker":{"color":"rgba(255,204,0,1)","line":{"color":"rgba(255,204,0,1)"}},"textfont":{"color":"rgba(255,204,0,1)"},"error_y":{"color":"rgba(255,204,0,1)"},"error_x":{"color":"rgba(255,204,0,1)"},"line":{"color":"rgba(255,204,0,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["2021-02-07"],"y":[9.650578953],"showlegend":false,"mode":"lines+markers","legendgroup":"DpL","hovertemplate":"%{y:.1f}%","type":"scatter","name":"DpL","marker":{"color":"rgba(0,95,171,1)","line":{"color":"rgba(0,95,171,1)"}},"textfont":{"color":"rgba(0,95,171,1)"},"error_y":{"color":"rgba(0,95,171,1)"},"error_x":{"color":"rgba(0,95,171,1)"},"line":{"color":"rgba(0,95,171,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["1974-02-03"],"y":[2.682648402],"showlegend":false,"mode":"lines+markers","legendgroup":"CSP","hovertemplate":"%{y:.1f}%","type":"scatter","visible":"legendonly","name":"CSP","marker":{"color":"rgba(0,176,80,1)","line":{"color":"rgba(0,176,80,1)"}},"textfont":{"color":"rgba(0,176,80,1)"},"error_y":{"color":"rgba(0,176,80,1)"},"error_x":{"color":"rgba(0,176,80,1)"},"line":{"color":"rgba(0,176,80,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["1989-03-05"],"y":[3.760112267],"showlegend":false,"mode":"lines+markers","legendgroup":"ÜLL","hovertemplate":"%{y:.1f}%","type":"scatter","visible":"legendonly","name":"ÜLL","marker":{"color":"rgba(157,53,139,1)","line":{"color":"rgba(157,53,139,1)"}},"textfont":{"color":"rgba(157,53,139,1)"},"error_y":{"color":"rgba(157,53,139,1)"},"error_x":{"color":"rgba(157,53,139,1)"},"line":{"color":"rgba(157,53,139,1)"},"xaxis":"x","yaxis":"y2","frame":null},{"x":["1974-02-03","1978-02-02","1982-02-07","1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[53.72619048,53.58172544,51.09957239,47.93882979,48.80958516,49.9678695,45.87273192,43.88667759,54.85726193,54.2504817,48.2015994,41.90538519,39.43691149,38.86877828],"showlegend":false,"mode":"lines+markers","legendgroup":"FBP","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"FBP","marker":{"color":"rgba(77,78,80,1)","line":{"color":"rgba(77,78,80,1)"}},"textfont":{"color":"rgba(77,78,80,1)"},"error_y":{"color":"rgba(77,78,80,1)"},"error_x":{"color":"rgba(77,78,80,1)"},"line":{"color":"rgba(77,78,80,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"x":["1974-02-03","1978-02-02","1982-02-07","1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[42.85714286,46.41827456,48.90042761,46.74202128,44.14068539,41.29016312,47.17863532,44.24490752,38.72890185,36.20423892,44.16961131,30.91249065,32.00564972,33.2],"showlegend":false,"mode":"lines+markers","legendgroup":"VU","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"VU","marker":{"color":"rgba(204,0,51,1)","line":{"color":"rgba(204,0,51,1)"}},"textfont":{"color":"rgba(204,0,51,1)"},"error_y":{"color":"rgba(204,0,51,1)"},"error_x":{"color":"rgba(204,0,51,1)"},"line":{"color":"rgba(204,0,51,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"x":["1986-02-02","1989-03-05","1993-02-07","1993-10-24","1997-02-02","2001-02-11","2005-03-13","2009-02-08","2013-02-03","2017-02-05","2021-02-07"],"y":[5.319148936,5.745941768,8.741967375,6.948632763,11.86841489,6.413836216,9.545279383,7.628789288,10.37023186,10.76271186,10.70950226],"showlegend":false,"mode":"lines+markers","legendgroup":"FL","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"FL","marker":{"color":"rgba(187,187,187,1)","line":{"color":"rgba(187,187,187,1)"}},"textfont":{"color":"rgba(187,187,187,1)"},"error_y":{"color":"rgba(187,187,187,1)"},"error_x":{"color":"rgba(187,187,187,1)"},"line":{"color":"rgba(187,187,187,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"x":["2013-02-03","2017-02-05","2021-02-07"],"y":[16.8118923,17.79472693,2.146606335],"showlegend":false,"mode":"lines+markers","legendgroup":"DU","hovertemplate":["%{y:.1f}%","%{y:.1f}%","%{y:.1f}%"],"type":"scatter","name":"DU","marker":{"color":"rgba(255,204,0,1)","line":{"color":"rgba(255,204,0,1)"}},"textfont":{"color":"rgba(255,204,0,1)"},"error_y":{"color":"rgba(255,204,0,1)"},"error_x":{"color":"rgba(255,204,0,1)"},"line":{"color":"rgba(255,204,0,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"x":["2021-02-07"],"y":[15.07511312],"showlegend":false,"mode":"lines+markers","legendgroup":"DpL","hovertemplate":"%{y:.1f}%","type":"scatter","name":"DpL","marker":{"color":"rgba(0,95,171,1)","line":{"color":"rgba(0,95,171,1)"}},"textfont":{"color":"rgba(0,95,171,1)"},"error_y":{"color":"rgba(0,95,171,1)"},"error_x":{"color":"rgba(0,95,171,1)"},"line":{"color":"rgba(0,95,171,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"x":["1974-02-03"],"y":[3.416666667],"showlegend":false,"mode":"lines+markers","legendgroup":"CSP","hovertemplate":"%{y:.1f}%","type":"scatter","visible":"legendonly","name":"CSP","marker":{"color":"rgba(0,176,80,1)","line":{"color":"rgba(0,176,80,1)"}},"textfont":{"color":"rgba(0,176,80,1)"},"error_y":{"color":"rgba(0,176,80,1)"},"error_x":{"color":"rgba(0,176,80,1)"},"line":{"color":"rgba(0,176,80,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"x":["1989-03-05"],"y":[1.303787684],"showlegend":false,"mode":"lines+markers","legendgroup":"ÜLL","hovertemplate":"%{y:.1f}%","type":"scatter","visible":"legendonly","name":"ÜLL","marker":{"color":"rgba(157,53,139,1)","line":{"color":"rgba(157,53,139,1)"}},"textfont":{"color":"rgba(157,53,139,1)"},"error_y":{"color":"rgba(157,53,139,1)"},"error_x":{"color":"rgba(157,53,139,1)"},"line":{"color":"rgba(157,53,139,1)"},"xaxis":"x","yaxis":"y3","frame":null}],"layout":{"xaxis":{"domain":[0,1],"automargin":true,"type":"date","range":["1973-10-01","2022-01-01"],"title":"Datum","tickvals":["1974-02-03","1974-02-03","1974-02-03","1978-02-02","1978-02-02","1982-02-07","1982-02-07","1986-02-02","1986-02-02","1986-02-02","1989-03-05","1989-03-05","1989-03-05","1989-03-05","1993-02-07","1993-02-07","1993-02-07","1993-10-24","1993-10-24","1993-10-24","1997-02-02","1997-02-02","1997-02-02","2001-02-11","2001-02-11","2001-02-11","2005-03-13","2005-03-13","2005-03-13","2009-02-08","2009-02-08","2009-02-08","2013-02-03","2013-02-03","2013-02-03","2013-02-03","2017-02-05","2017-02-05","2017-02-05","2017-02-05","2021-02-07","2021-02-07","2021-02-07","2021-02-07","2021-02-07"],"ticktext":["1974-02-03","1974-02-03","1974-02-03","1978-02-02","1978-02-02","1982-02-07","1982-02-07","1986-02-02","1986-02-02","1986-02-02","1989-03-05","1989-03-05","1989-03-05","1989-03-05","1993-02-07","1993-02-07","1993-02-07","1993-10-24","1993-10-24","1993-10-24","1997-02-02","1997-02-02","1997-02-02","2001-02-11","2001-02-11","2001-02-11","2005-03-13","2005-03-13","2005-03-13","2009-02-08","2009-02-08","2009-02-08","2013-02-03","2013-02-03","2013-02-03","2013-02-03","2017-02-05","2017-02-05","2017-02-05","2017-02-05","2021-02-07","2021-02-07","2021-02-07","2021-02-07","2021-02-07"],"anchor":"y3"},"yaxis3":{"domain":[0,0.313333333333333],"automargin":true,"range":[0,65],"title":"Parteistärke (%)","anchor":"x"},"yaxis2":{"domain":[0.353333333333333,0.646666666666667],"automargin":true,"range":[0,65],"title":"Parteistärke (%)","anchor":"x"},"yaxis":{"domain":[0.686666666666667,1],"automargin":true,"range":[0,65],"title":"Parteistärke (%)","anchor":"x"},"annotations":[{"x":0.5,"y":1.011,"text":"Liechtenstein","showarrow":false,"xref":"paper","yref":"paper","font":{"size":20}},{"x":0.5,"y":0.637,"text":"Oberland","showarrow":false,"xref":"paper","yref":"paper","font":{"size":20}},{"x":0.5,"y":0.28,"text":"Unterland","showarrow":false,"xref":"paper","yref":"paper","font":{"size":20}}],"shapes":[],"images":[],"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"x unified","showlegend":true,"legend":{"title":{"text":"<b>Partei:<\/b>"},"y":0.8},"plot_bgcolor":"#f5f5f5"},"attrs":{"3a744541c7d":{"x":{},"y":{},"showlegend":true,"mode":"lines+markers","legendgroup":{},"hovertemplate":"%{y:.1f}%","color":{},"colors":["#4D4E50","#cc0033","#bbbbbb","#ffcc00","#005fab","#00B050","#9d358b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"3a741cd4767f":{"x":{},"y":{},"showlegend":true,"mode":"lines+markers","legendgroup":{},"hovertemplate":"%{y:.1f}%","color":{},"colors":["#4D4E50","#cc0033","#bbbbbb","#ffcc00","#005fab","#00B050","#9d358b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","visible":"legendonly","inherit":true},"3a745a25559a":{"x":{},"y":{},"showlegend":false,"mode":"lines+markers","legendgroup":{},"hovertemplate":"%{y:.1f}%","color":{},"colors":["#4D4E50","#cc0033","#bbbbbb","#ffcc00","#005fab","#00B050","#9d358b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"3a7428c76960":{"x":{},"y":{},"showlegend":false,"mode":"lines+markers","legendgroup":{},"hovertemplate":"%{y:.1f}%","color":{},"colors":["#4D4E50","#cc0033","#bbbbbb","#ffcc00","#005fab","#00B050","#9d358b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","visible":"legendonly","inherit":true},"3a7422221838":{"x":{},"y":{},"showlegend":false,"mode":"lines+markers","legendgroup":{},"hovertemplate":"%{y:.1f}%","color":{},"colors":["#4D4E50","#cc0033","#bbbbbb","#ffcc00","#005fab","#00B050","#9d358b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"3a7465a7181f":{"x":{},"y":{},"showlegend":false,"mode":"lines+markers","legendgroup":{},"hovertemplate":"%{y:.1f}%","color":{},"colors":["#4D4E50","#cc0033","#bbbbbb","#ffcc00","#005fab","#00B050","#9d358b"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","visible":"legendonly","inherit":true}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false,"locale":"de","displaylogo":false,"scrollZoom":false,"displayModeBar":true,"modeBarButtonsToRemove":["select2d","lasso2d"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<a onclick="fetch(&#39;data:text/csv;base64,RGF0dW07UGFydGVpO0xpZWNodGVuc3RlaW47T2JlcmxhbmQ7VW50ZXJsYW5kCjE5NzQtMDItMDM7Q1NQOzIsOTsyLDc7Myw0CjE5NzQtMDItMDM7RkJQOzUwLDQ7NDgsODs1Myw3CjE5NzQtMDItMDM7VlU7NDYsNzs0OCw1OzQyLDkKMTk3OC0wMi0wMjtGQlA7NTEsMTs1MCwwOzUzLDYKMTk3OC0wMi0wMjtWVTs0OCw5OzUwLDA7NDYsNAoxOTgyLTAyLTA3O0ZCUDs0NywwOzQ1LDA7NTEsMQoxOTgyLTAyLTA3O1ZVOzUzLDA7NTUsMDs0OCw5CjE5ODYtMDItMDI7RkJQOzQzLDM7NDEsMTs0Nyw5CjE5ODYtMDItMDI7Rkw7Niw5OzcsNjs1LDMKMTk4Ni0wMi0wMjtWVTs0OSw4OzUxLDM7NDYsNwoxOTg5LTAzLTA1O0ZCUDs0Miw4OzQwLDA7NDgsOAoxOTg5LTAzLTA1O0ZMOzcsNDs4LDE7NSw3CjE5ODktMDMtMDU7w5xMTDszLDA7Myw4OzEsMwoxOTg5LTAzLTA1O1ZVOzQ2LDg7NDgsMTs0NCwxCjE5OTMtMDItMDc7RkJQOzQ0LDg7NDIsMzs1MCwwCjE5OTMtMDItMDc7Rkw7MTAsMjsxMCw5OzgsNwoxOTkzLTAyLTA3O1ZVOzQ1LDA7NDYsODs0MSwzCjE5OTMtMTAtMjQ7RkJQOzQxLDg7MzksODs0NSw5CjE5OTMtMTAtMjQ7Rkw7OCw0OzksMTs2LDkKMTk5My0xMC0yNDtWVTs0OSw4OzUxLDE7NDcsMgoxOTk3LTAyLTAyO0ZCUDszOSw3OzM3LDY7NDMsOQoxOTk3LTAyLTAyO0ZMOzExLDY7MTEsNTsxMSw5CjE5OTctMDItMDI7VlU7NDgsNzs1MCw5OzQ0LDIKMjAwMS0wMi0xMTtGQlA7NTAsNTs0OCwyOzU0LDkKMjAwMS0wMi0xMTtGTDs4LDU7OSw2OzYsNAoyMDAxLTAyLTExO1ZVOzQxLDA7NDIsMzszOCw3CjIwMDUtMDMtMTM7RkJQOzQ5LDQ7NDYsNzs1NCwzCjIwMDUtMDMtMTM7Rkw7MTIsNjsxNCwzOzksNQoyMDA1LTAzLTEzO1ZVOzM4LDA7MzksMDszNiwyCjIwMDktMDItMDg7RkJQOzQ0LDA7NDEsNzs0OCwyCjIwMDktMDItMDg7Rkw7OCw4OzksNDs3LDYKMjAwOS0wMi0wODtWVTs0NywyOzQ4LDk7NDQsMgoyMDEzLTAyLTAzO0RVOzE1LDU7MTQsODsxNiw4CjIwMTMtMDItMDM7RkJQOzQwLDI7MzksMzs0MSw5CjIwMTMtMDItMDM7Rkw7MTEsMDsxMSw0OzEwLDQKMjAxMy0wMi0wMztWVTszMywyOzM0LDY7MzAsOQoyMDE3LTAyLTA1O0RVOzE4LDM7MTgsNjsxNyw4CjIwMTctMDItMDU7RkJQOzM1LDc7MzMsNzszOSw0CjIwMTctMDItMDU7Rkw7MTIsNDsxMywzOzEwLDgKMjAxNy0wMi0wNTtWVTszMyw1OzM0LDQ7MzIsMAoyMDIxLTAyLTA3O0RwTDsxMSw2OzksNzsxNSwxCjIwMjEtMDItMDc7RFU7NCwwOzUsMDsyLDEKMjAyMS0wMi0wNztGQlA7MzYsMjszNCw3OzM4LDkKMjAyMS0wMi0wNztGTDsxMiw2OzEzLDc7MTAsNwoyMDIxLTAyLTA3O1ZVOzM1LDY7MzYsOTszMywyCg==&#39;).then(res =&gt; res.blob()).then(blob =&gt; {&#10;      const downloadURL = window.URL.createObjectURL(blob);&#10;      const a = document.createElement(&#39;a&#39;);&#10;      document.body.appendChild(a);&#10;      a.href = downloadURL;&#10;      a.download = &#39;Parteistaerke.csv&#39;; a.click();&#10;      window.URL.revokeObjectURL(downloadURL);&#10;      document.body.removeChild(a);&#10;    });">
+<button class="btn btn-default" has_icon="TRUE"><i class="fa fa-save"></i> Daten (csv)</button>
+</a>
+<p><em>Datenquelle: Eigene Berechnungen auf Basis der amtlichen
+Wahlergebnisse </em><br />
+<br />
+Bei der Berechnung der Parteistärke ist die unterschiedliche Grösse der
+beiden Wahlkreise zu berücksichtigen. Im Oberland sind 15 und im
+Unterland 10 Sitze zu vergeben. Dementsprechend hat eine Wählerin/ein
+Wähler im Oberland 15 Stimmen zu vergeben, im Unterland hingegen nur
+deren 10. Wird dieser Aspekt bei der Berechnung der Parteistärke nicht
+berücksichtigt und die einfache Summe der Parteistimmen aus beiden
+Wahlkreisen gebildet, sind Wählende aus dem Oberland folglich über- und
+Wählende aus dem Unterland untergewichtet.</p>
+<p>Aufgrund dessen beruht die folgende Darstellung der Parteistärke auf
+den <em>effektiven Parteistimmen</em>. Diese berechnen sich, indem die
+Stimmen der Parteien durch die Anzahl der im jeweiligen Wahlkreis zu
+vergebenden Mandate geteilt werden. Die <em>effektive Parteistärke</em>
+einer Partei ergibt sich somit aus der Summe der effektiven Stimmen der
+jeweiligen Partei aus den beiden Wahlkreisen dividiert durch die Summe
+der effektiven Stimmen aller Parteien in beiden Wahlkreisen. Derselben
+Logik folgend werden in der Schweiz beispielsweise sogenannte “fiktive
+Wählende” berechnet. In den amtlichen Kundmachungen zu den
+Landtagswahlen wird demgegenüber jeweils die einfache Summe der
+Parteistimmen ausgewiesen.<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
